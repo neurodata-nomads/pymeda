@@ -85,16 +85,15 @@ class Synaptome:
                     #data[:, i] = np.multiply(np.array(list(map(np.sum, results))), masks)
 
         df = pd.DataFrame(data, index=self.labels, columns=channel_list)
-
+        self.df = df
         return df
     
     def upload_to_boss(self, volume, host, token, channel_name, collection, experiment):
         NeuroDataResource.ingest_volume(host, token, channel_name, collection, experiment, volume)
 
-        url = 'https://ndwebtools.neurodata.io/ndviz_url/{}/{}/{}'.format(collection, 
-                                                                          expriment, 
-                                                                          channel_name)
-        print('You can view the clusters here: ')
+        print('You can view the upload here: ')
+
+        url = 'https://ndwebtools.neurodata.io/ndviz_url/{}/{}/{}'.format(collection, experiment, channel_name)
         print(url)  
 
     def create_cluster_vol(self, ds, levels, seed):
@@ -115,6 +114,9 @@ class Synaptome:
                 out[z[0]:z[1], y[0]:y[1], x[0]:x[1]] = levels * 10 + idx
 
         return out
+
+    def export_data(self):
+        return pd.concat([self.df, self.centroids], axis=1)
         
 
     def _get_sparse_annotation(self, annotation_channel):
