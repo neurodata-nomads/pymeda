@@ -1,16 +1,12 @@
+import lemur.plotters as lpl
 import numpy as np
 import pandas as pd
-import sys
-sys.path.append('../../bstadt/NeuroDataResource')
-sys.path.append('../../../../lemur/lemur')
-sys.path.append('../../../../../lemur/lemur/')
 from functools import partial
 from multiprocessing import Pool
 from multiprocessing.dummy import Pool as ThreadPool 
 from NeuroDataResource import NeuroDataResource
 from scipy.sparse import csr_matrix
 from scipy.stats import zscore
-import lemur.plotters as lpl
 
 
 class Synaptome:
@@ -59,11 +55,11 @@ class Synaptome:
 
         TODO: Gaussian masking
         """
-        self.sp_arr, self.labels = self._get_sparse_annotation(annotation_channel)
+        if self.sp_arr == None:
+            self.sp_arr, self.labels = self._get_sparse_annotation(annotation_channel)
 
         if method == 'box':
-            if self.centroids == None: #Check if centroids are already calculated
-                self.centroids = self._calculate_centroids()
+            self.centroids = self._calculate_centroids()
             self.dimensions = self._calculate_dimensions(self.centroids, size, self.max_dimensions)
         elif method == 'tight':
             self.dimensions = self._calculate_tight_bounds()
@@ -91,7 +87,10 @@ class Synaptome:
 
         return df
     
-    def create_annotation_volume(self, ds, levels, seed):
+    def _upload_to_boss(self, volume, host, token, channel_name, collection, experiment):
+        NeuroDataResource.ingest_volume(host, token, channel_name, collection, experiment, volume)
+
+    def upload_clusters(self, ds, levels, seed, config):
         out = np.empty(self.max_dimensions, dtype=np.uint64)
         hgmm = lpl.HGMMPlotter(ds, levels=levels, random_state=seed)
 
@@ -108,8 +107,14 @@ class Synaptome:
                 z, y, x = self.dimensions[index]
                 out[z[0]:z[1], y[0]:y[1], x[0]:x[1]] = levels * 10 + idx
 
-        return out
-    
+        self._upload_to_boss(out, **config)
+
+        url = 'https://ndwebtools.neurodata.io/ndviz_url/{}/{}/{}'.format(config['collection'], 
+                                                                          config['experiment'], 
+                                                                          channel_name)
+        print('You can view the clusters here: ')
+        print(url)    
+        
 
     def _get_sparse_annotation(self, annotation_channel):
         """
