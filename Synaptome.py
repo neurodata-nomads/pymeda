@@ -1,6 +1,7 @@
 import lemur.plotters as lpl
 import numpy as np
 import pandas as pd
+from intern.resource.boss.resource import ChannelResource
 from functools import partial
 from multiprocessing import Pool
 from multiprocessing.dummy import Pool as ThreadPool 
@@ -87,10 +88,16 @@ class Synaptome:
 
         return df
     
-    def _upload_to_boss(self, volume, host, token, channel_name, collection, experiment):
+    def upload_to_boss(self, volume, host, token, channel_name, collection, experiment):
         NeuroDataResource.ingest_volume(host, token, channel_name, collection, experiment, volume)
 
-    def upload_clusters(self, ds, levels, seed, config):
+        url = 'https://ndwebtools.neurodata.io/ndviz_url/{}/{}/{}'.format(collection, 
+                                                                          expriment, 
+                                                                          channel_name)
+        print('You can view the clusters here: ')
+        print(url)  
+
+    def create_cluster_vol(self, ds, levels, seed):
         out = np.empty(self.max_dimensions, dtype=np.uint64)
         hgmm = lpl.HGMMPlotter(ds, levels=levels, random_state=seed)
 
@@ -107,13 +114,7 @@ class Synaptome:
                 z, y, x = self.dimensions[index]
                 out[z[0]:z[1], y[0]:y[1], x[0]:x[1]] = levels * 10 + idx
 
-        self._upload_to_boss(out, **config)
-
-        url = 'https://ndwebtools.neurodata.io/ndviz_url/{}/{}/{}'.format(config['collection'], 
-                                                                          config['experiment'], 
-                                                                          channel_name)
-        print('You can view the clusters here: ')
-        print(url)    
+        return out
         
 
     def _get_sparse_annotation(self, annotation_channel):
