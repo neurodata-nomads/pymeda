@@ -5,18 +5,23 @@ Running MEDA on Synapses
 The software has been tested macOS Sierra 10.12.6 (2.9GHz Intel Core i5).
 
 ### Python depedencies:
-colorama --- 0.3.9<br/>
-scikit_image --- 0.13.1<br/>
-scipy --- 1.0.0<br/>
-numpy --- 1.13.1<br/>
-requests --- 2.18.4<br/>
-intern --- 0.9.4<br/>
-tifffile --- 0.12.1<br/>
-tqdm --- 4.19.5<br/>
-matplotlib --- 2.1.0<br/>
-progressbar2 --- 3.34.3<br/>
-scikit_learn --- 0.19.1<br/>
-pyfiglet --- 0.7.5<br/>
+blosc==1.4.4<br/>
+colorlover==0.2.1<br/>
+-e git://github.com/j1c/intern.git#egg=intern<br/>
+jupyter==1.0.0<br/>
+mock==2.0.0<br/>
+nose2==0.6.5<br/>
+numpy==1.13.1<br/>
+pandas==0.21.0<br/>
+pbr==3.1.1<br/>
+plotly==2.2.3<br/>
+requests==2.11.1<br/>
+scikit-image==0.13.1<br/>
+scipy==1.0.0<br/>
+six==1.10.0<br/>
+-e git://github.com/j1c/lemur.git@j1c-dev#egg=redlemur<br/>
+scikit-learn==0.19.1<br/>
+seaborn==0.8.1<br/>
 
 ## Installation Guide
 This assumes you have these tools already installed:
