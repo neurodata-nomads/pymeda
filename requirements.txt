@@ -1,0 +1,17 @@
+jupyter
+blosc==1.4.4
+colorlover
+mock==2.0.0
+nose2==0.6.5
+numpy==1.13.1
+pbr==3.1.1
+plotly
+requests==2.11.1
+scikit-image==0.13.1
+scipy==1.0.0
+six==1.10.0
+-e git://github.com/j1c/intern.git#egg=intern
+-e git://github.com/j1c/lemur.git@j1c-dev#egg=lemur
+pandas==0.21.0
+scikit-learn==0.19.1
+seaborn
