@@ -58,7 +58,7 @@ If you do not have these tools installed, you can click the links to download an
     ```
 
 ## Demo
-Open the `api_key.txt` text file in the repository, and copy/paste your token into the file. This is required for grabbing data from BOSS, and later, uploading data back to the BOSS.
+Open the `api_key.txt` text file in the repository, and copy/paste your token into the file. If you do not know how to get your token, go to the last section in this [document](https://github.com/NeuroDataDesign/nomads/blob/master/source/bstadt/NeuroDataResource/NeuroDataResource_Doc_Notebook.ipynb). This is required for grabbing data from BOSS, and later, uploading data back to the BOSS.
 
 1. Navigate to the jupyter tab in your browser. If you closed it by accident, you can reopen it using the following url:
     ```
