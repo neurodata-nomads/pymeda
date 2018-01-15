@@ -7,7 +7,7 @@ The software has been tested macOS Sierra 10.12.6 (2.9GHz Intel Core i5).
 ### Python depedencies:
 blosc==1.4.4<br/>
 colorlover==0.2.1<br/>
--e git://github.com/j1c/intern.git#egg=intern<br/>
+intern==0.9.6<br/>
 jupyter==1.0.0<br/>
 mock==2.0.0<br/>
 nose2==0.6.5<br/>
