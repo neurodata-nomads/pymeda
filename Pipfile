@@ -9,7 +9,6 @@ name = "pypi"
 
 blosc = "==1.4.4"
 colorlover = "==0.2.1"
-intern = {git = "git://github.com/j1c/intern.git", editable = true}
 jupyter = "==1.0.0"
 mock = "==2.0.0"
 "nose2" = "==0.6.5"
@@ -23,6 +22,7 @@ scipy = "==1.0.0"
 redlemur = {git = "git://github.com/j1c/lemur.git", editable = true, ref = "j1c-dev"}
 scikit-learn = "==0.19.1"
 seaborn = "==0.8.1"
+intern = "*"
 
 
 [dev-packages]
