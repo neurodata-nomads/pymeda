@@ -3,17 +3,19 @@ import intern
 from intern.remote.boss import BossRemote
 from intern.resource.boss.resource import ChannelResource, ExperimentResource, CoordinateFrameResource
 
+
 class NeuroDataResource:
     def __init__(self, host, token, collection, experiment):
-        self._bossRemote = BossRemote({'protocol': 'https',
-                                       'host': host,
-                                       'token': token})
+        self._bossRemote = BossRemote({
+            'protocol': 'https',
+            'host': host,
+            'token': token
+        })
         self.collection = collection
         self.experiment = experiment
         self.channels = self._bossRemote.list_channels(collection, experiment)
-        self.channels.remove('empty') #Delete "empty" channel
-        self._get_coord_frame_details()
-
+        self.channels.remove('empty')  #Delete "empty" channel
+        self.max_dimensions, self.voxel_size = self._get_coord_frame_details()
 
     def _get_coord_frame_details(self):
         exp_resource = ExperimentResource(self.experiment, self.collection)
@@ -22,9 +24,10 @@ class NeuroDataResource:
         coord_frame_resource = CoordinateFrameResource(coord_frame)
         data = self._bossRemote.get_project(coord_frame_resource)
 
-        self.max_dimensions = (data.z_stop, data.y_stop, data.x_stop)
-        self.voxel_size = (data.z_voxel_size, data.y_voxel_size, data.x_voxel_size)
+        max_dimensions = (data.z_stop, data.y_stop, data.x_stop)
+        voxel_size = (data.z_voxel_size, data.y_voxel_size, data.x_voxel_size)
 
+        return max_dimensions, voxel_size
 
     def _get_channel(self, chan_name):
         """
@@ -47,66 +50,19 @@ class NeuroDataResource:
             print('Error: Channel Not Found in this Resource')
             return
         if zRange is None or yRange is None or xRange is None:
-            print('Error: You must supply zRange, yRange, xRange kwargs in list format')
+            print(
+                'Error: You must supply zRange, yRange, xRange kwargs in list format'
+            )
             return
 
         channel_resource = self._get_channel(chan)
         datatype = channel_resource.datatype
 
-        data = self._bossRemote.get_cutout(channel_resource,
-                                           0,
-                                           xRange,
-                                           yRange,
+        data = self._bossRemote.get_cutout(channel_resource, 0, xRange, yRange,
                                            zRange)
 
         return data
 
-    @staticmethod
-    def ingest_volume(host, token, channel_name, collection, experiment, volume):
-        """
-        Assumes the collection and experiment exists in BOSS.
-        """
-        
-        remote = BossRemote({'protocol': 'https',
-                             'host': host,
-                             'token': token})
-
-        if volume.dtype == 'uint64':
-            dtype = 'uint64'
-            img_type = 'annotation'
-            sources = ['empty']
-        else:
-            dtype = volume.dtype.name
-            img_type = 'image'
-            sources = []
-        
-        try:
-            channel_resource = ChannelResource(channel_name, collection, experiment)
-            channel = remote.get_project(channel_resource)
-        except:
-            channel_resource = ChannelResource(channel_name, collection, experiment,
-                                               type=img_type,
-                                               sources=sources,
-                                               datatype=dtype)
-            channel = remote.create_project(channel_resource)
-
-        #Get max size of experiment
-        exp_resource = ExperimentResource(experiment, collection)
-        coord_frame = remote.get_project(exp_resource).coord_frame
-        coord_frame_resource = CoordinateFrameResource(coord_frame)
-        data = remote.get_project(coord_frame_resource)
-        y_stop, x_stop = data.y_stop, data.x_stop
-        
-        for z in range(volume.shape[0]):
-            print('Uploading {} slice'.format(z))
-            remote.create_cutout(channel,
-                                 0,
-                                 (0, x_stop), 
-                                 (0, y_stop),
-                                 (z, z + 1), 
-                                 volume[z, :, :].reshape((-1, y_stop, x_stop)))
-
-        
 
 """
 def test_function():
