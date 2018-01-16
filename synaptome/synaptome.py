@@ -1,12 +1,12 @@
 from itertools import repeat
 from functools import partial
+from multiprocessing import Pool
+from multiprocessing.dummy import Pool as ThreadPool
 
 import lemur.plotters as lpl
 import numpy as np
 import pandas as pd
 from intern.resource.boss.resource import ChannelResource
-from multiprocessing import Pool
-from multiprocessing.dummy import Pool as ThreadPool
 from scipy.sparse import csr_matrix
 from scipy.stats import zscore
 
@@ -155,7 +155,7 @@ class Synaptome(NeuroDataResource):
         self.df = df
         return df
 
-    """
+
     def upload_to_boss(self, volume, host, token, channel_name, collection,
                        experiment):
         NeuroDataResource.ingest_volume(host, token, channel_name, collection,
@@ -166,7 +166,7 @@ class Synaptome(NeuroDataResource):
         url = 'https://ndwebtools.neurodata.io/ndviz_url/{}/{}/{}'.format(
             collection, experiment, channel_name)
         print(url)
-    """
+
     def create_cluster_vol(self, ds, levels, seed):
         out = np.empty(self.max_dimensions, dtype=np.uint64)
         hgmm = lpl.HGMMPlotter(ds, levels=levels, random_state=seed)
