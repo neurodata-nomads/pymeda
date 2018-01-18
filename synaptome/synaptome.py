@@ -3,13 +3,14 @@ from functools import partial
 from multiprocessing import Pool
 from multiprocessing.dummy import Pool as ThreadPool
 
-import lemur.plotters as lpl
 import numpy as np
 import pandas as pd
+from lemur.plotters import HGMMPlotter
 from intern.resource.boss.resource import ChannelResource
 from scipy.sparse import csr_matrix
 from scipy.stats import zscore
 
+from cached_property import cached_property
 from neurodataresource import NeuroDataResource
 
 
@@ -18,7 +19,13 @@ class Synaptome(NeuroDataResource):
     TODO: Write docs. Also open for suggestions for class name. 
     """
 
-    def __init__(self, host, token, collection, experiment, annotation_name, threads=10):
+    def __init__(self,
+                 host,
+                 token,
+                 collection,
+                 experiment,
+                 annotation_name,
+                 threads=10):
         """
         Constructor
 
@@ -38,12 +45,10 @@ class Synaptome(NeuroDataResource):
 
         self.annotation_resource = self._bossRemote.get_project(
             ChannelResource(annotation_name, collection, experiment))
-        self.labels = self.get_labels()
-        self.bounds = self.get_bounds(threads=threads)
-        self.centroids = self.get_centroids(threads=threads)
-        #self.sp_arr = None
+        self.threads = threads
 
-    def get_labels(self):
+    @cached_property
+    def labels(self):
         """
         Obtains all unique ids in an annotation volume.
 
@@ -60,9 +65,15 @@ class Synaptome(NeuroDataResource):
 
         return ids
 
-    def get_bounds(self, threads=10):
+    @cached_property
+    def bounds(self):
         """
         Obtains loose bounding boxes for each unique ids.
+
+        Parameters
+        ----------
+        threads : int
+            Number of threads to spawn to connect to BOSS
 
         Returns
         -------
@@ -70,65 +81,94 @@ class Synaptome(NeuroDataResource):
         """
         print('Fetching bounding box for each annotation label.')
 
-        with ThreadPool(processes=threads) as tp:
+        with ThreadPool(processes=self.threads) as tp:
             args = zip(
-                repeat(self.annotation_resource), repeat(0), self.labels, repeat('tight'))
+                repeat(self.annotation_resource), repeat(0), self.labels,
+                repeat('tight'))
             bounds = tp.starmap(self._bossRemote.get_bounding_box, args)
 
         return bounds
 
-    def get_centroids(self, threads=10):
+    @cached_property
+    def centroids(self):
         """
         Calculates centroids. Downloads cutout of each bounding box then finds the 
         volumetric centroid of the cutout.
+
+        Parameters
+        ----------
+        threads : int
+            Number of threads to spawn to connect to BOSS
+
+        Returns
+        -------
+        centroids : 2d-array
+            Array of each centroids in z, y, x format
         """
         print('Calculating centroids.')
-        x_ranges = [bound['x_range'] for bound in self.bounds]
-        y_ranges = [bound['y_range'] for bound in self.bounds]
-        z_ranges = [bound['z_range'] for bound in self.bounds]
 
-        with ThreadPool(processes=threads) as tp:
-            args = zip(repeat(self.annotation_resource), repeat(0), x_ranges, y_ranges, z_ranges)
+        z_ranges = [bound['z_range'] for bound in self.bounds]
+        y_ranges = [bound['y_range'] for bound in self.bounds]
+        x_ranges = [bound['x_range'] for bound in self.bounds]
+
+        with ThreadPool(processes=self.threads) as tp:
+            args = zip(
+                repeat(self.annotation_resource), repeat(0), x_ranges,
+                y_ranges, z_ranges)
             cutouts = tp.starmap(self._bossRemote.get_cutout, args)
 
-        #TODO: calculate centroids for each cutout
-        self.cutouts = cutouts
+        centroids = np.empty((len(self.bounds), 3))
+        for idx, cutout in enumerate(cutouts):
+            z, y, x = np.nonzero(cutout)
+            centroids[idx, :] = np.mean(z) + z_ranges[idx][0], \
+                                np.mean(y) + y_ranges[idx][0], \
+                                np.mean(x) + x_ranges[idx][0]
 
-    def F0(self,
-           annotation_channel,
+        return centroids.astype(np.int)
+
+    def _initialize_properties(self):
+        """
+        Helper function to initialize labels, bounds, and centroids 
+        properties, which are lazily evalutated.
+        """
+        self.labels
+        self.bounds
+        self.centroids
+
+    def calculate_stats(self, channel_list, size=None, mask=None):
+        """
+        Calculate integrated sum
+        """
+        self._initialize_properties()
+
+        pass
+
+    def F0_(self,
            channel_list,
            method='tight',
            size=None,
-           mask=None):
+           mask=None,
+           threads=10):
         """
         Calculates integrated sum for given box size built around each centroids
 
         Parameters
         ----------
-        annotation_channel : str
-            Name of an annotation channel
         channel_list : list of str
             List of channels to calculate F0. Specify order.
-        method : str
-            'tight' builds tight bounds on annotation or 'box' builds box of user
-            specified size.
         size : 1d-array like, (optional if method is 'tight')
             Size of boxes to build around centroid in (z, y, x) format.
         mask : optional
 
         TODO: Gaussian masking
         """
-        if self.sp_arr == None:
-            self.sp_arr, self.labels = self._get_sparse_annotation(
-                annotation_channel)
 
         if method == 'box':
-            self.centroids = self._calculate_centroids()
             self.dimensions = self._calculate_dimensions(
                 self.centroids, size, self.max_dimensions)
         elif method == 'tight':
             self.dimensions = self._calculate_tight_bounds()
-            with ThreadPool(processes=8) as tp:
+            with ThreadPool(processes=self.threads) as tp:
                 func = partial(self._resource.get_cutout, annotation_channel)
                 results = tp.starmap(func, self.dimensions)
                 masks = []
@@ -155,6 +195,9 @@ class Synaptome(NeuroDataResource):
         self.df = df
         return df
 
+    def gaussian_mask():
+        #TODO: write guassian masking using FWHM
+        pass
 
     def upload_to_boss(self, volume, host, token, channel_name, collection,
                        experiment):
@@ -169,7 +212,7 @@ class Synaptome(NeuroDataResource):
 
     def create_cluster_vol(self, ds, levels, seed):
         out = np.empty(self.max_dimensions, dtype=np.uint64)
-        hgmm = lpl.HGMMPlotter(ds, levels=levels, random_state=seed)
+        hgmm = HGMMPlotter(ds, levels=levels, random_state=seed)
 
         l = []
         for cluster in hgmm.levels[levels]:
@@ -188,57 +231,6 @@ class Synaptome(NeuroDataResource):
 
     def export_data(self):
         return pd.concat([self.df, self.centroids], axis=1)
-
-    def _get_sparse_annotation(self, annotation_channel):
-        """
-        TODO: if annotation is image volume, run connected components
-        """
-        print('Downloading annotation channel')
-        img = self._resource.get_cutout(
-            annotation_channel, [0, self.max_dimensions[0]],
-            [0, self.max_dimensions[1]], [0, self.max_dimensions[2]])
-
-        sp_arr = csr_matrix(img.reshape(1, -1))
-        labels = np.unique(sp_arr.data)
-
-        return sp_arr, labels
-
-    def _calculate_tight_bounds(self):
-        """
-        Calculates the tight bound box for each object in sparse matrix
-        """
-
-        out = np.empty((len(self.labels), 3, 2), dtype=np.int)
-
-        for i, label in enumerate(self.labels):
-            z, y, x = np.unravel_index(
-                self.sp_arr.indices[self.sp_arr.data == label],
-                self.max_dimensions)
-
-            zmin, zmax = np.min(z), np.max(z)
-            ymin, ymax = np.min(y), np.max(y)
-            xmin, xmax = np.min(x), np.max(x)
-
-            out[i, :, :] = np.asarray([[zmin, zmax + 1], [ymin, ymax + 1],
-                                       [xmin, xmax + 1]])
-
-        return out
-
-    def _calculate_centroids(self):
-        """
-        Calculates the volumetric centroid of a sparsely labeled
-        image volume.
-        """
-        centroids = np.empty((len(self.labels), 3))
-
-        for i, label in enumerate(self.labels):
-            z, y, x = np.unravel_index(
-                self.sp_arr.indices[self.sp_arr.data == label],
-                self.max_dimensions)
-
-            centroids[i] = np.mean(z), np.mean(y), np.mean(x)
-
-        return centroids.astype(np.int)
 
     def _calculate_dimensions(self, centroids, size, max_dimensions):
         """
