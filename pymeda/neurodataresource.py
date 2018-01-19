@@ -45,46 +45,14 @@ class NeuroDataResource:
         return channel in self.channels
 
     def get_cutout(self, chan, zRange=None, yRange=None, xRange=None):
-        if chan not in self.channels:
-            print('Error: Channel Not Found in this Resource')
-            return
-        if zRange is None or yRange is None or xRange is None:
-            print(
-                'Error: You must supply zRange, yRange, xRange kwargs in list format'
-            )
-            return
-
-        channel_resource = self._get_channel(chan)
-        datatype = channel_resource.datatype
-
-        data = self._bossRemote.get_cutout(channel_resource, 0, xRange, yRange,
+        try:
+            channel_resource = self._get_channel(chan)
+            datatype = channel_resource.datatype
+            data = self._bossRemote.get_cutout(channel_resource, 0, xRange, yRange,
                                            zRange)
 
-        return data
-
-
-"""
-def test_function():
-    #load ground truth file
-    gt = io.imread('./data/gt.tiff')
-
-    #api token is stored externally for security
-    token = pickle.load(open('./data/token.pkl', 'rb'))
-    host = 'api.boss.neurodata.io'
-    myResource = NeuroDataResource(host,
-                                  token,
-                                  'collman',
-                                  'collman15v2',
-                                  [{'name':'annotation', 'dtype':'uint64'},
-                                   {'name':'DAPI1st', 'dtype':'uint8'},
-                                   {'name':'GABA488', 'dtype':'uint8'}])
-
-    cutout = myResource.get_cutout('annotation', [2,4], [2300,2500], [3400,3700])
-
-    print(gt.shape == cutout.shape)
-    print(delta_epsilon(np.mean(gt), np.mean(cutout), 1e-4))
-
-
-if __name__ == '__main__':
-    test_function()
-"""
+            return data
+        except TypeError:
+            print('Error: Valid zRange, yRange, and xRange must be supplied.')
+        except:
+            print('Error: Channel not found in experiment.')
