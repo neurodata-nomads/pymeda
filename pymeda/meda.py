@@ -77,8 +77,7 @@ class Meda(NeuroDataResource):
 
         return ids
 
-    @labels.setter
-    def labels(self, csv_file, cols):
+    def set_labels(self, csv_file, cols=None):
         """
         Setter for tight bounds based on csv file. CSV file must have 
         columns that specify label column.
@@ -90,7 +89,10 @@ class Meda(NeuroDataResource):
         cols : list of str
             Column name.
         """
-        return read_csv(csv_file, cols=cols)
+        if not cols:
+            cols = ['label']
+
+        self.labels = read_csv(csv_file, cols=cols)
 
     @cached_property
     def bounds(self):
@@ -122,8 +124,7 @@ class Meda(NeuroDataResource):
 
         return bounds
 
-    @bounds.setter
-    def bounds(self, csv_file, cols):
+    def set_bounds(self, csv_file, cols=None):
         """
         Setter for tight bounds based on csv file. CSV file must have 
         columns that specify z_min, z_max, y_min, y_max, x_min, x_max columns.
@@ -135,7 +136,10 @@ class Meda(NeuroDataResource):
         cols : list of str
             Column names.
         """
-        return read_csv(csv_file, cols=cols)
+        if not cols:
+            cols = ['z_min', 'z_max', 'y_min', 'y_max', 'x_min', 'x_max']
+
+        self.bounds = read_csv(csv_file, cols)
 
     @cached_property
     def centroids(self):
@@ -167,8 +171,7 @@ class Meda(NeuroDataResource):
 
         return centroids.astype(np.int)
 
-    @centroids.setter
-    def centroids(self, csv_file, cols):
+    def set_centroids(self, csv_file, cols=None):
         """
         Setter for centroids based on csv file. CSV file must have z, y, x
         columns.
@@ -180,7 +183,10 @@ class Meda(NeuroDataResource):
         cols : list of str
             Column names of z, y, x in csv_file.
         """
-        return read_csv(csv_file, cols=cols)
+        if not cols:
+            cols = ['z', 'y', 'x']
+
+        self.centroids = read_csv(csv_file, cols=cols)
 
     def _initialize_properties(self):
         """
@@ -221,8 +227,8 @@ class Meda(NeuroDataResource):
 
     def calculate_stats(self, channels, size=None, pyfunc=np.mean, mask=None):
         """
-        Calculates aggregate based on pyfunc specified by the user. Defaults 
-        to average intensity. 
+        Calculates aggregate based on pyfunc specified by the user. If no size is provided,
+        uses tight bounds. Defaults to average intensity. 
 
         Parameters
         ----------
