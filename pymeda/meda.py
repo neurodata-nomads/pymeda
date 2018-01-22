@@ -122,9 +122,9 @@ class Meda(NeuroDataResource):
             Array of each centroids in z, y, x format
         """
         print('Calculating centroids.')
-        z_ranges = self.bounds.values[:, :2]
+        z_ranges = self.bounds.values[:, 0:2]
         y_ranges = self.bounds.values[:, 2:4]
-        x_ranges = self.bounds.values[:, 4:]
+        x_ranges = self.bounds.values[:, 4:6]
 
         with ThreadPool(processes=self.threads) as tp:
             args = zip(
@@ -144,7 +144,7 @@ class Meda(NeuroDataResource):
         df.index.rename('labels', inplace=True)
         return df
 
-    def _set_labels(self, csv_file, cols='labels'):
+    def _set_labels(self, csv_file, cols=None):
         """
         Setter for tight bounds based on csv file. CSV file must have 
         columns that specify label column.
@@ -157,7 +157,7 @@ class Meda(NeuroDataResource):
             Column name.
         """
         if not cols:
-            cols = ['labels']
+            cols = 'labels'
 
         try:
             self.labels = read_csv(csv_file, cols=cols).values
@@ -240,9 +240,9 @@ class Meda(NeuroDataResource):
         z_dim, y_dim, x_dim = [(i - 1) // 2 for i in size]
         z_max, y_max, x_max = self.max_dimensions
 
-        grid = np.array([-z_dim, z_dim, -y_dim, y_dim, -x_dim, x_dim])
+        grid = np.array([-z_dim, z_dim + 1, -y_dim, y_dim + 1, -x_dim, x_dim + 1])
 
-        dimensions = np.repeat(self.centroids, 2, axis=1) + grid
+        dimensions = np.repeat(self.centroids.values, 2, axis=1) + grid
 
         np.clip(
             dimensions[:, 0:2], a_min=0, a_max=z_max, out=dimensions[:, 0:2])
@@ -308,12 +308,9 @@ class Meda(NeuroDataResource):
         pass
 
     def export_data(self):
-        keys = ['bounds', 'centroids', 'data']
+        keys = ['centroids', 'bounds', 'data']
         out = (self.__dict__[key] for key in keys if key in self.__dict__.keys())
         return pd.concat(out, axis=1)
-
-    def import_data(self, csv_file):
-        pass
 
     def upload_to_boss(self, volume, host, token, channel_name, collection,
                        experiment):
