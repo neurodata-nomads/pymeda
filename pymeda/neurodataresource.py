@@ -13,8 +13,10 @@ class NeuroDataResource:
         self.collection = collection
         self.experiment = experiment
         self.channels = self._bossRemote.list_channels(collection, experiment)
-        self.channels.remove('empty')  #Delete "empty" channel
+        if 'empty' in self.channels:
+            self.channels.remove('empty')  #Delete "empty" channel
         self.max_dimensions, self.voxel_size = self._get_coord_frame_details()
+
 
     def _get_coord_frame_details(self):
         exp_resource = ExperimentResource(self.experiment, self.collection)

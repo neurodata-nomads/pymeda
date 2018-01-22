@@ -75,7 +75,7 @@ def block_compute(x_start,
     return chunks
 
 
-def read_csv(csv_file, cols):
+def read_csv(csv_file, cols, index_col=None):
     """
     Helper function for catching errors when grabbing data from a csv file.
 
@@ -83,6 +83,8 @@ def read_csv(csv_file, cols):
     ----------
     csv_file : str
         Path to csv file
+    index_col : str
+        Column name of index
     cols : list
         List of str. Contains the columns to extract from csv file
 
@@ -92,7 +94,7 @@ def read_csv(csv_file, cols):
     """
     try:
         df = pd.read_csv(csv_file)
-        out = df[cols].values
+        out = df[cols]
         return out
     except FileNotFoundError as e: #Invalid file path
         print(e.args[0])
