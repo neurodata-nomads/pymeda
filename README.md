@@ -1,5 +1,5 @@
-# Synaptome
-Running MEDA on Synapses
+# PyMEDA
+Running MEDA on conjugate array-tomography (cAT) data that is stored in BOSS.
 
 ## System Requirements
 The software has been tested macOS Sierra 10.12.6 (2.9GHz Intel Core i5).
