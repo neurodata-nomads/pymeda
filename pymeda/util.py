@@ -83,17 +83,17 @@ def read_csv(csv_file, cols, index_col=None):
     ----------
     csv_file : str
         Path to csv file
-    index_col : str
-        Column name of index
     cols : list
         List of str. Contains the columns to extract from csv file
+    index_col : str
+        Column name of index
 
     Returns
     -------
-    out : array
+    out : pd.DataFrame
     """
     try:
-        df = pd.read_csv(csv_file)
+        df = pd.read_csv(csv_file, index_col=index_col)
         out = df[cols]
         return out
     except FileNotFoundError as e: #Invalid file path

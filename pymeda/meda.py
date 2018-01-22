@@ -77,23 +77,6 @@ class Meda(NeuroDataResource):
 
         return ids
 
-    def set_labels(self, csv_file, cols=None):
-        """
-        Setter for tight bounds based on csv file. CSV file must have 
-        columns that specify label column.
-
-        Parameters
-        ----------
-        csv_file : str
-            Path to the csv file.
-        cols : list of str
-            Column name.
-        """
-        if not cols:
-            cols = ['labels']
-
-        self.labels = read_csv(csv_file, cols=cols).values
-
     @cached_property
     def bounds(self):
         """
@@ -127,25 +110,6 @@ class Meda(NeuroDataResource):
         df.index.rename('labels', inplace=True)
         return df
 
-    def set_bounds(self, csv_file, cols=None, index_col='labels'):
-        """
-        Setter for tight bounds based on csv file. CSV file must have 
-        columns that specify z_min, z_max, y_min, y_max, x_min, x_max columns.
-
-        Parameters
-        ----------
-        csv_file : str
-            Path to the csv file.
-        cols : list of str
-            Column names.
-        """
-        if not cols:
-            cols = ['z_min', 'z_max', 'y_min', 'y_max', 'x_min', 'x_max']
-
-        df = read_csv(csv_file, cols=cols, index_col=index_col)
-        df.index.rename('labels', inplace=True)
-        self.bounds = df
-
     @cached_property
     def centroids(self):
         """
@@ -175,11 +139,54 @@ class Meda(NeuroDataResource):
                 y) + y_ranges[idx][0], np.mean(x) + x_ranges[idx][0]
 
         cols = ['z', 'y', 'x']
-        df = pd.DataFrame(centroids.astype(np.int), index=self.labels, columns=cols)
+        df = pd.DataFrame(
+            centroids.astype(np.int), index=self.labels, columns=cols)
         df.index.rename('labels', inplace=True)
         return df
 
-    def set_centroids(self, csv_file, cols=None, index_col='labels'):
+    def _set_labels(self, csv_file, cols='labels'):
+        """
+        Setter for tight bounds based on csv file. CSV file must have 
+        columns that specify label column.
+
+        Parameters
+        ----------
+        csv_file : str
+            Path to the csv file.
+        cols : list of str
+            Column name.
+        """
+        if not cols:
+            cols = ['labels']
+
+        try:
+            self.labels = read_csv(csv_file, cols=cols).values
+        except AttributeError:
+            pass
+
+    def _set_bounds(self, csv_file, cols=None, index_col='labels'):
+        """
+        Setter for tight bounds based on csv file. CSV file must have 
+        columns that specify z_min, z_max, y_min, y_max, x_min, x_max columns.
+
+        Parameters
+        ----------
+        csv_file : str
+            Path to the csv file.
+        cols : list of str
+            Column names.
+        """
+        if not cols:
+            cols = ['z_min', 'z_max', 'y_min', 'y_max', 'x_min', 'x_max']
+
+        try:
+            df = read_csv(csv_file, cols=cols, index_col=index_col)
+            df.index.rename('labels', inplace=True)
+            self.bounds = df
+        except AttributeError:
+            pass
+
+    def _set_centroids(self, csv_file, cols=None, index_col='labels'):
         """
         Setter for centroids based on csv file. CSV file must have z, y, x
         columns.
@@ -194,9 +201,20 @@ class Meda(NeuroDataResource):
         if not cols:
             cols = ['z', 'y', 'x']
 
-        df = read_csv(csv_file, cols=cols, index_col=index_col)
-        df.index.rename('labels', inplace=True)
-        self.centroids = df
+        try:
+            df = read_csv(csv_file, cols=cols, index_col=index_col)
+            df.index.rename('labels', inplace=True)
+            self.centroids = df
+        except AttributeError:
+            pass
+
+    def set_properties(self, csv_file, label_col=None, bounds_cols=None, centroids_cols=None):
+        """
+        Setter for labels, bounds, and centroids.
+        """
+        self._set_labels(csv_file=csv_file, cols=label_col)
+        self._set_bounds(csv_file=csv_file, cols=bounds_cols, index_col=label_col)
+        self._set_centroids(csv_file=csv_file, cols=centroids_cols, index_col=label_col)
 
     def _initialize_properties(self):
         """
@@ -270,7 +288,7 @@ class Meda(NeuroDataResource):
                     repeat(channel), dimensions[:, 0:2], dimensions[:, 2:4],
                     dimensions[:, 4:6])
                 cutouts = tp.starmap(self.get_cutout, args)
-                #data[:, idx] = list(map(pyfunc, cutouts))
+                #Maybe add a way to pass a bunch of functions
                 data[:, idx] = [pyfunc(cutout) for cutout in cutouts]
                 """
                 if size:
@@ -279,14 +297,22 @@ class Meda(NeuroDataResource):
                     data[:, idx] = np.divide(
                         list(map(np.sum, np.multiply(results, masks))),
                         list(map(np.sum, masks)))"""
-                #data[:, i] = np.multiply(np.array(list(map(np.sum, results))), masks)
 
         df = pd.DataFrame(data, index=self.labels, columns=channels)
         df.index.rename('labels', inplace=True)
+        self.data = df
         return df
 
-    def gaussian_mask():
+    def gaussian_mask(self):
         #TODO: write guassian masking using FWHM
+        pass
+
+    def export_data(self):
+        keys = ['bounds', 'centroids', 'data']
+        out = (self.__dict__[key] for key in keys if key in self.__dict__.keys())
+        return pd.concat(out, axis=1)
+
+    def import_data(self, csv_file):
         pass
 
     def upload_to_boss(self, volume, host, token, channel_name, collection,
@@ -318,9 +344,3 @@ class Meda(NeuroDataResource):
                 out[z[0]:z[1], y[0]:y[1], x[0]:x[1]] = levels * 10 + idx
 
         return out
-
-    def export_data(self):
-        return pd.concat([self.centroids, self.bounds], axis=1)
-
-    def import_data(self, csv_file):
-        pass
