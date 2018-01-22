@@ -90,9 +90,9 @@ class Meda(NeuroDataResource):
             Column name.
         """
         if not cols:
-            cols = ['label']
+            cols = ['labels']
 
-        self.labels = read_csv(csv_file, cols=cols)
+        self.labels = read_csv(csv_file, cols=cols).values
 
     @cached_property
     def bounds(self):
@@ -122,9 +122,12 @@ class Meda(NeuroDataResource):
             x_min, x_max = result['x_range']
             bounds[idx, :] = z_min, z_max, y_min, y_max, x_min, x_max
 
-        return bounds
+        cols = ['z_min', 'z_max', 'y_min', 'y_max', 'x_min', 'x_max']
+        df = pd.DataFrame(bounds, index=self.labels, columns=cols)
+        df.index.rename('labels', inplace=True)
+        return df
 
-    def set_bounds(self, csv_file, cols=None):
+    def set_bounds(self, csv_file, cols=None, index_col='labels'):
         """
         Setter for tight bounds based on csv file. CSV file must have 
         columns that specify z_min, z_max, y_min, y_max, x_min, x_max columns.
@@ -139,7 +142,9 @@ class Meda(NeuroDataResource):
         if not cols:
             cols = ['z_min', 'z_max', 'y_min', 'y_max', 'x_min', 'x_max']
 
-        self.bounds = read_csv(csv_file, cols)
+        df = read_csv(csv_file, cols=cols, index_col=index_col)
+        df.index.rename('labels', inplace=True)
+        self.bounds = df
 
     @cached_property
     def centroids(self):
@@ -153,9 +158,9 @@ class Meda(NeuroDataResource):
             Array of each centroids in z, y, x format
         """
         print('Calculating centroids.')
-        z_ranges = self.bounds[:, :2]
-        y_ranges = self.bounds[:, 2:4]
-        x_ranges = self.bounds[:, 4:]
+        z_ranges = self.bounds.values[:, :2]
+        y_ranges = self.bounds.values[:, 2:4]
+        x_ranges = self.bounds.values[:, 4:]
 
         with ThreadPool(processes=self.threads) as tp:
             args = zip(
@@ -169,9 +174,12 @@ class Meda(NeuroDataResource):
             centroids[idx, :] = np.mean(z) + z_ranges[idx][0], np.mean(
                 y) + y_ranges[idx][0], np.mean(x) + x_ranges[idx][0]
 
-        return centroids.astype(np.int)
+        cols = ['z', 'y', 'x']
+        df = pd.DataFrame(centroids.astype(np.int), index=self.labels, columns=cols)
+        df.index.rename('labels', inplace=True)
+        return df
 
-    def set_centroids(self, csv_file, cols=None):
+    def set_centroids(self, csv_file, cols=None, index_col='labels'):
         """
         Setter for centroids based on csv file. CSV file must have z, y, x
         columns.
@@ -186,7 +194,9 @@ class Meda(NeuroDataResource):
         if not cols:
             cols = ['z', 'y', 'x']
 
-        self.centroids = read_csv(csv_file, cols=cols)
+        df = read_csv(csv_file, cols=cols, index_col=index_col)
+        df.index.rename('labels', inplace=True)
+        self.centroids = df
 
     def _initialize_properties(self):
         """
@@ -249,7 +259,7 @@ class Meda(NeuroDataResource):
         if size:
             dimensions = self.calculate_dimensions(size)
         else:
-            dimensions = self.bounds
+            dimensions = self.bounds.values
 
         data = np.empty((len(dimensions), len(channels)))
 
@@ -272,6 +282,7 @@ class Meda(NeuroDataResource):
                 #data[:, i] = np.multiply(np.array(list(map(np.sum, results))), masks)
 
         df = pd.DataFrame(data, index=self.labels, columns=channels)
+        df.index.rename('labels', inplace=True)
         return df
 
     def gaussian_mask():
@@ -309,4 +320,7 @@ class Meda(NeuroDataResource):
         return out
 
     def export_data(self):
-        return pd.concat([self.df, self.centroids], axis=1)
+        return pd.concat([self.centroids, self.bounds], axis=1)
+
+    def import_data(self, csv_file):
+        pass
