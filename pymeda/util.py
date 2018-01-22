@@ -75,7 +75,7 @@ def block_compute(x_start,
     return chunks
 
 
-def read_csv(csv_file, cols=None):
+def read_csv(csv_file, cols):
     """
     Helper function for catching errors when grabbing data from a csv file.
 
@@ -89,7 +89,6 @@ def read_csv(csv_file, cols=None):
     Returns
     -------
     out : array
-
     """
     try:
         df = pd.read_csv(csv_file)

@@ -78,13 +78,19 @@ class Meda(NeuroDataResource):
         return ids
 
     @labels.setter
-    def labels(self, csv_file):
+    def labels(self, csv_file, cols):
         """
-        Setter for unique labels
-        """
-        index_col = 'labels'
+        Setter for tight bounds based on csv file. CSV file must have 
+        columns that specify label column.
 
-        return read_csv(csv_file, cols=index_col)
+        Parameters
+        ----------
+        csv_file : str
+            Path to the csv file.
+        cols : list of str
+            Column name.
+        """
+        return read_csv(csv_file, cols=cols)
 
     @cached_property
     def bounds(self):
@@ -115,6 +121,21 @@ class Meda(NeuroDataResource):
             bounds[idx, :] = z_min, z_max, y_min, y_max, x_min, x_max
 
         return bounds
+
+    @bounds.setter
+    def bounds(self, csv_file, cols):
+        """
+        Setter for tight bounds based on csv file. CSV file must have 
+        columns that specify z_min, z_max, y_min, y_max, x_min, x_max columns.
+
+        Parameters
+        ----------
+        csv_file : str
+            Path to the csv file.
+        cols : list of str
+            Column names.
+        """
+        return read_csv(csv_file, cols=cols)
 
     @cached_property
     def centroids(self):
@@ -147,7 +168,7 @@ class Meda(NeuroDataResource):
         return centroids.astype(np.int)
 
     @centroids.setter
-    def centroids(self, csv_file):
+    def centroids(self, csv_file, cols):
         """
         Setter for centroids based on csv file. CSV file must have z, y, x
         columns.
@@ -156,9 +177,9 @@ class Meda(NeuroDataResource):
         ----------
         csv_file : str
             Path to the csv file. Must have z, y, x columns. 
+        cols : list of str
+            Column names of z, y, x in csv_file.
         """
-        cols = ['z', 'y', 'x']
-
         return read_csv(csv_file, cols=cols)
 
     def _initialize_properties(self):
@@ -233,8 +254,8 @@ class Meda(NeuroDataResource):
                     repeat(channel), dimensions[:, 0:2], dimensions[:, 2:4],
                     dimensions[:, 4:6])
                 cutouts = tp.starmap(self.get_cutout, args)
-                temp = list(map(pyfunc, cutouts))
-                data[:, idx] = temp
+                #data[:, idx] = list(map(pyfunc, cutouts))
+                data[:, idx] = [pyfunc(cutout) for cutout in cutouts]
                 """
                 if size:
                     data[:, idx] = np.array(list(map(pyfunc, results)))
