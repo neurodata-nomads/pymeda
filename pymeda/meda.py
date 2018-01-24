@@ -1,3 +1,4 @@
+from datetime import datetime
 from itertools import chain, repeat
 from functools import partial
 from multiprocessing import Pool
@@ -273,6 +274,7 @@ class Meda(NeuroDataResource):
         """
         #Get labels, bounds, and centroids
         self._initialize_properties()
+        self._pyfunc = pyfunc.__name__
 
         if size:
             dimensions = self.calculate_dimensions(size)
@@ -307,10 +309,26 @@ class Meda(NeuroDataResource):
         #TODO: write guassian masking using FWHM
         pass
 
-    def export_data(self):
+    def export_data(self, path=None):
+        """
+        Export data in the Meda class. Returns dataframe if path is None.
+
+        Parameters
+        ----------
+        path : str
+            path to the folder the data will be saved.
+        """
         keys = ['centroids', 'bounds', 'data']
-        out = (self.__dict__[key] for key in keys if key in self.__dict__.keys())
-        return pd.concat(out, axis=1)
+        out = (self.__dict__[key] for key in keys
+               if key in self.__dict__.keys())
+
+        df = pd.concat(out, axis=1)
+        if to_file:
+            path = 
+            fname = '_'.join([datetime.today().strftime('%Y%m%d'), self.experiment, self._pyfunc]) + '.csv'
+            
+            df.to_csv()
+        return df
 
     def upload_to_boss(self, volume, host, token, channel_name, collection,
                        experiment):
