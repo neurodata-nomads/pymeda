@@ -1,5 +1,8 @@
 # PyMEDA
-Running MEDA on conjugate array-tomography (cAT) data that is stored in BOSS.
+Running MEDA on conjugate array-tomography (cAT) data that is stored in BOSS. There are two main features of this package:
+
+1. pyMEDA can access BOSS datastore to calculate features, such as mean intensity around synapse annotations.
+2. pyMEDA can plot features using LEMUR. 
 
 ## System Requirements
 The software has been tested macOS Sierra 10.12.6 (2.9GHz Intel Core i5).
