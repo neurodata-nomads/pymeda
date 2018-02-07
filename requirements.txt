@@ -1,6 +1,6 @@
 blosc==1.4.4
 colorlover==0.2.1
-intern>=0.9.6
+-e git://github.com/j1c/intern@cutout_dtype_fix#egg=intern
 jupyter==1.0.0
 mock==2.0.0
 nose2==0.6.5
@@ -12,6 +12,6 @@ requests==2.11.1
 scikit-image==0.13.1
 scipy==1.0.0
 six==1.10.0
--e git://github.com/j1c/lemur.git@j1c-dev#egg=redlemur
+-e git://github.com/NeuroDataDesign/lemur#egg=redlemur
 scikit-learn==0.19.1
 seaborn==0.8.1
