@@ -1,3 +1,4 @@
+import argparse
 import time
 
 import matplotlib as mpl
@@ -65,10 +66,43 @@ def generate_report(plots, title, date):
     return result
 
 
+def parse_cmd_line_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '-f',
+        '--file_name',
+        type=str,
+        help='Input file in csv or comma delimited format',
+        required=True)
+    parser.add_argument(
+        '-i', '--index_col', type=str, help='Index column in input file')
+    parser.add_argument(
+        '-t', '--title', type=str, help='Title of the datatset')
+    parser.add_argument(
+        '-o',
+        '--outdir',
+        type=str,
+        help='Path to output directory',
+        required=True)
+
+    result = parser.parse_args()
+    return result
+
+
 if __name__ == '__main__':
-    title = 'Collman15 Tight Annotations'
     date = time.strftime("%Y-%m-%d")
-    plots = make_plots('../data/collman15v2_tight_mean.csv', title=title)
-    result = generate_report(plots, title=title, date=date)
-    with open('output.html', 'w') as f:
-        f.write(result)
+
+    result = parse_cmd_line_args()
+    plots = make_plots(
+        result.file_name, title=result.title, index_col=result.index_col)
+    report = generate_report(plots, title=result.title, date=date)
+
+    if result.outdir.endswith('/'):
+        outdir = result.outdir + date + '_' + result.title + '.html'
+    else:
+        outdir = result.outdir + '/' + date + '_' + result.title + '.html'
+
+    with open(outdir, 'w') as f:
+        f.write(report)
+
+    print('Report saved at {}'.format(outdir))
