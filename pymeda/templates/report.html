@@ -1,0 +1,34 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="generator" content="pandoc">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <title>{{ title }}</title>
+</head>
+
+<body>
+    <div id="TOC">
+        <ul>
+            {% for key, plot in plots.items() %}
+            <li>
+                <a href={{ "#"~key }}>
+                    <span class="toc-section-number">{{ loop.index }}</span> {{ key }}
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    {% for key, plot in plots.items() %}
+    <div id={{ key }} class="section level2">
+        <h2>
+            <span class="header-section-number">{{ loop.index }}</span> {{ key }}
+        </h2>
+        {{ plot }}
+    </div>
+    {% endfor %}
+</body>
+
+</html>
