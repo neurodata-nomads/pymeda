@@ -1,6 +1,7 @@
+import time
+
 import matplotlib as mpl
 mpl.use('TkAgg')
-
 import lemur.datasets as lds
 import lemur.plotters as lpl
 import pandas as pd
@@ -53,21 +54,21 @@ def make_plots(csv_file, title=None, index_col=None):
     return out
 
 
-def generate_report(plots):
+def generate_report(plots, title, date):
     """
     Generate an html report using csv_file.
     """
     env = Environment(loader=FileSystemLoader(["./templates"]))
     template = env.get_template('report.html')
-    result = template.render(plots=plots)
+    result = template.render(title=title, plots=plots, date=date)
 
     return result
 
 
 if __name__ == '__main__':
-    plots = make_plots(
-        '../data/collman15v2_tight_mean.csv',
-        title='Collman15 Tight Annotations')
-    result = generate_report(plots)
+    title = 'Collman15 Tight Annotations'
+    date = time.strftime("%Y-%m-%d")
+    plots = make_plots('../data/collman15v2_tight_mean.csv', title=title)
+    result = generate_report(plots, title=title, date=date)
     with open('output.html', 'w') as f:
         f.write(result)

@@ -1,34 +1,72 @@
-<html>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="generator" content="pandoc">
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1">-->
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <title>{{ title }}</title>
 </head>
 
 <body>
-    <div id="TOC">
-        <ul>
-            {% for key, plot in plots.items() %}
-            <li>
-                <a href={{ "#"~key }}>
-                    <span class="toc-section-number">{{ loop.index }}</span> {{ key }}
-                </a>
-            </li>
-            {% endfor %}
-        </ul>
+    <div style="visibility: hidden; overflow: hidden; position: absolute; top: 0px; height: 1px; width: auto; padding: 0px; border: 0px; margin: 0px; text-align: left; text-indent: 0px; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal;">
     </div>
 
-    {% for key, plot in plots.items() %}
-    <div id={{ key }} class="section level2">
-        <h2>
-            <span class="header-section-number">{{ loop.index }}</span> {{ key }}
-        </h2>
-        {{ plot }}
+    <style type="text/css">
+        .main-container {
+            max-width: 940px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        code {
+            color: inherit;
+            background-color: rgba(0, 0, 0, 0.04);
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .tabbed-pane {
+            padding-top: 12px;
+        }
+
+        button.code-folding-btn:focus {
+            outline: none;
+        }
+    </style>
+    <div class="container-fluid main-container">
+        <div class="fluid-row" id="header">
+            <h1 class="title toc-ignore">{{ title }}</h1>
+            <h4 class='date'>
+                <em>{{ date }}</em>
+            </h4>
+        </div>
+        <div id="TOC">
+            <ul>
+                {% for key, plot in plots.items() %}
+                <li>
+                    <a href={{ "#"~key }}>
+                        <span class="toc-section-number">{{ loop.index~"." }}</span> {{ key }}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        {% for key, plot in plots.items() %}
+        <div id={{ key }} class="section level2">
+            <h2>
+                <span class="header-section-number">{{ loop.index~"." }}</span> {{ key }}
+            </h2>
+            {{ plot }}
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
 </body>
 
 </html>
