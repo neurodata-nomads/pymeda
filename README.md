@@ -1,30 +1,20 @@
 # PyMEDA
-Running MEDA on conjugate array-tomography (cAT) data that is stored in BOSS. There are two main features of this package:
-
-1. pyMEDA can access BOSS datastore to calculate features, such as mean intensity around synapse annotations.
-2. pyMEDA can plot features using LEMUR. 
+PyMEDA is a python package for matrix exploratory data analysis (MEDA). 
 
 ## System Requirements
 The software has been tested macOS Sierra 10.12.6 (2.9GHz Intel Core i5).
 
 ### Python depedencies:
-blosc==1.4.4<br/>
 colorlover==0.2.1<br/>
-intern==0.9.6<br/>
 jupyter==1.0.0<br/>
-mock==2.0.0<br/>
 nose2==0.6.5<br/>
 numpy==1.13.1<br/>
 pandas==0.21.0<br/>
-pbr==3.1.1<br/>
 plotly==2.2.3<br/>
-requests==2.11.1<br/>
 scikit-image==0.13.1<br/>
 scipy==1.0.0<br/>
-six==1.10.0<br/>
--e git://github.com/j1c/lemur.git@j1c-dev#egg=redlemur<br/>
+-e git://github.com/j1c/lemur.git@clustering#egg=redlemur<br/>
 scikit-learn==0.19.1<br/>
-seaborn==0.8.1<br/>
 
 ## Installation Guide
 This assumes you have these tools already installed:
@@ -37,15 +27,15 @@ This assumes you have these tools already installed:
 If you do not have these tools installed, you can click the links to download and install them. If you do have these tools installed, you can go ahead with the following. It should take about 2-3 minutes.
 1. Clone this repository
     ```
-    git clone https://github.com/j1c/synaptome.git
+    git clone https://github.com/neurodata-nomads/pymeda.git
     ```
 2. Navigate to the repository directory
     ```
-    cd synaptome
+    cd pymeda
     ```
 3. Create a virtualenvironment called synaptome
     ```
-    mkvirtualenv -p python3 synaptome
+    mkvirtualenv -p python3 pymeda
     ```
 2. Install the dependencies using pip and requirements.txt
     ```
@@ -53,19 +43,9 @@ If you do not have these tools installed, you can click the links to download an
     ```
 3. Make the synaptome virtual environment available in jupyter notebook.
     ```
-    python -m ipykernel install --user --name=synaptome
+    python -m ipykernel install --user --name=pymeda
     ```
 4. Run jupyter notebook
     ```
     jupyter notebook
     ```
-
-## Demo
-Open the `api_key.txt` text file in the repository, and copy/paste your token into the file. If you do not know how to get your token, go to the last section in this [document](https://github.com/NeuroDataDesign/nomads/blob/master/source/bstadt/NeuroDataResource/NeuroDataResource_Doc_Notebook.ipynb). This is required for grabbing data from BOSS, and later, uploading data back to the BOSS.
-
-1. Navigate to the jupyter tab in your browser. If you closed it by accident, you can reopen it using the following url:
-    ```
-    localhost:8888/tree
-    ```
-2. Open the `demo.ipynb`
-3. You can run each cell to view the results.
