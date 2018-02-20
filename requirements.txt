@@ -1,17 +1,18 @@
-blosc==1.4.4
 colorlover==0.2.1
--e git://github.com/j1c/intern@cutout_dtype_fix#egg=intern
 jupyter==1.0.0
-mock==2.0.0
-nose2==0.6.5
 numpy==1.13.1
 pandas==0.21.0
-pbr==3.1.1
 plotly==2.2.3
-requests==2.11.1
-scikit-image==0.13.1
 scipy==1.0.0
-six==1.10.0
--e git://github.com/j1c/lemur@clustering#egg=redlemur
+-e git://github.com/NeuroDataDesign/lemur.git#egg=redlemur
 scikit-learn==0.19.1
-seaborn==0.8.1
+knor
+cython
+
+#
+##### From Lemur requirements since there is no requirements.txt #####
+boto3==1.4.7
+nilearn==0.4.0
+matplotlib==2.1.0
+nose
+imageio

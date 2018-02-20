@@ -7,23 +7,27 @@ name = "pypi"
 
 [packages]
 
-blosc = "==1.4.4"
 colorlover = "==0.2.1"
-intern = {git = "git://github.com/j1c/intern", editable = true, ref = "cutout_dtype_fix"}
 jupyter = "==1.0.0"
-mock = "==2.0.0"
-"nose2" = "==0.6.5"
 numpy = "==1.13.1"
 pandas = "==0.21.0"
-pbr = "==3.1.1"
 plotly = "==2.2.3"
-requests = "==2.11.1"
-scikit-image = "==0.13.1"
 scipy = "==1.0.0"
-redlemur = {git = "git://github.com/NeuroDataDesign/lemur", editable = true}
+redlemur = {git = "git://github.com/j1c/lemur", editable = true, ref = "clustering"}
 scikit-learn = "==0.19.1"
-seaborn = "==0.8.1"
+knor = "==0.0.1"
+cython = "*"
+"boto3" = "*"
+nilearn = "*"
+nose = "*"
+matplotlib = "*"
+imageio = "*"
 
 
 [dev-packages]
 
+
+
+[requires]
+
+python_version = "3.6"
