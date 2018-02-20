@@ -12,7 +12,26 @@ from jinja2 import Environment, PackageLoader, select_autoescape, FileSystemLoad
 from scipy.stats import zscore
 
 
-def make_plots(csv_file, title=None, index_col=None):
+def make_plots(csv_file, index_col=None, title=None, cluster_levels=2):
+    """
+    Function for making series of plots.
+
+    Parameters
+    ----------
+    csv_file : str
+        Path to the csv_file to plot
+    index_col : str, optional
+        Name of the index column in csv_file
+    title : str, optional
+        Title of the dataset.
+    cluster_levels : int (default=1)
+        Number of levels for hierarchial clustering
+    
+    Returns
+    -------
+    out : dict
+        Dictionary containing html div for each plot
+    """
     ds = lds.CSVDataSet(csv_file, name=title, index_column=index_col)
 
     #Make plots and save as div
@@ -21,8 +40,10 @@ def make_plots(csv_file, title=None, index_col=None):
     location_lines = lpl.LocationLines(
         ds, mode='div').plot(showticklabels=True)
 
+    #Z-transform the data
     ds.D = ds.D.apply(zscore)
 
+    #Make plots on transformed data
     histogram_heatmap = lpl.HistogramHeatmap(
         ds, mode='div').plot(showticklabels=True)
     scree_plot = lpl.ScreePlotter(ds, mode='div').plot()
@@ -30,24 +51,28 @@ def make_plots(csv_file, title=None, index_col=None):
         ds, mode='div').plot(showticklabels=True)
 
     #HGMM plots
-    hgmm_ds = lcl.HGMMClustering(ds, levels=1)
-    hgmm_dendogram = lpl.HGMMClusterMeansDendrogram(hgmm_ds, mode='div').plot()
-    hgmm_pair_plot = lpl.HGMMPairsPlot(hgmm_ds, mode='div').plot()
+    cluster_ds = lcl.HGMMClustering(ds, levels=cluster_levels)
+    hgmm_dendogram = lpl.HGMMClusterMeansDendrogram(
+        cluster_ds, mode='div').plot()
+    hgmm_pair_plot = lpl.HGMMPairsPlot(cluster_ds, mode='div').plot()
     hgmm_stacked_mean = lpl.HGMMStackedClusterMeansHeatmap(
-        hgmm_ds, mode='div').plot(showticklabels=True)
+        cluster_ds, mode='div').plot(showticklabels=True)
+    hgmm_cluster_mean = lpl.HGMMClusterMeansLevelHeatmap(
+        cluster_ds, mode='div').plot(showticklabels=True)
     hgmm_cluster_means = lpl.HGMMClusterMeansLevelLines(
-        hgmm_ds, mode='div').plot(showticklabels=True)
+        cluster_ds, mode='div').plot(showticklabels=True)
 
     out = {
+        "Histogram Heatmap": histogram_heatmap,
         "Location Heatmap": location_heatmap,
         "Location Lines": location_lines,
-        "Histogram Heatmap": histogram_heatmap,
         "Scree Plot": scree_plot,
         "Correlation Matrix": corr_matrix,
         "Hierarchical GMM Dendogram": hgmm_dendogram,
         "Pair Plot": hgmm_pair_plot,
-        "Stacked Means": hgmm_stacked_mean,
-        "Cluster Means": hgmm_cluster_means
+        "Cluster Stacked Means": hgmm_stacked_mean,
+        "Cluster Mean Heatmap": hgmm_cluster_mean,
+        "Cluster Mean Lines": hgmm_cluster_means
     }
 
     return out
