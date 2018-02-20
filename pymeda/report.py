@@ -13,11 +13,6 @@ from scipy.stats import zscore
 
 
 def make_plots(csv_file, title=None, index_col=None):
-    """df = pd.read_csv(csv_file, index_col=index_col)
-
-    ds = lds.DataSet(df, name=title)
-    ds_normed = lds.DataSet(df.apply(zscore), name=title)"""
-
     ds = lds.CSVDataSet(csv_file, name=title, index_column=index_col)
 
     #Make plots and save as div
@@ -29,23 +24,19 @@ def make_plots(csv_file, title=None, index_col=None):
     ds.D = ds.D.apply(zscore)
 
     histogram_heatmap = lpl.HistogramHeatmap(
-        ds_normed, mode='div').plot(showticklabels=True)
-    scree_plot = lpl.ScreePlotter(ds_normed, mode='div').plot()
+        ds, mode='div').plot(showticklabels=True)
+    scree_plot = lpl.ScreePlotter(ds, mode='div').plot()
     corr_matrix = lpl.CorrelationMatrix(
-        ds_normed, mode='div').plot(showticklabels=True)
+        ds, mode='div').plot(showticklabels=True)
 
     #HGMM plots
-    seed = 2132
-    hgmm_ds = lcl.HGMMClustering
-    hgmm_dendogram = lpl.HGMMClusterMeansDendrogram(
-        ds_normed, mode='div').plot(level=1)
-    hgmm_pair_plot = lpl.HGMMPairsPlot(ds_normed, mode='div').plot(level=1)
+    hgmm_ds = lcl.HGMMClustering(ds, levels=1)
+    hgmm_dendogram = lpl.HGMMClusterMeansDendrogram(hgmm_ds, mode='div').plot()
+    hgmm_pair_plot = lpl.HGMMPairsPlot(hgmm_ds, mode='div').plot()
     hgmm_stacked_mean = lpl.HGMMStackedClusterMeansHeatmap(
-        ds_normed, mode='div').plot(
-            level=2, showticklabels=True)
+        hgmm_ds, mode='div').plot(showticklabels=True)
     hgmm_cluster_means = lpl.HGMMClusterMeansLevelLines(
-        ds_normed, mode='div').plot(
-            level=1, showticklabels=True)
+        hgmm_ds, mode='div').plot(showticklabels=True)
 
     out = {
         "Location Heatmap": location_heatmap,
