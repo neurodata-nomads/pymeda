@@ -209,13 +209,19 @@ class Meda(NeuroDataResource):
         except AttributeError:
             pass
 
-    def set_properties(self, csv_file, label_col=None, bounds_cols=None, centroids_cols=None):
+    def set_properties(self,
+                       csv_file,
+                       label_col=None,
+                       bounds_cols=None,
+                       centroids_cols=None):
         """
         Setter for labels, bounds, and centroids.
         """
         self._set_labels(csv_file=csv_file, cols=label_col)
-        self._set_bounds(csv_file=csv_file, cols=bounds_cols, index_col=label_col)
-        self._set_centroids(csv_file=csv_file, cols=centroids_cols, index_col=label_col)
+        self._set_bounds(
+            csv_file=csv_file, cols=bounds_cols, index_col=label_col)
+        self._set_centroids(
+            csv_file=csv_file, cols=centroids_cols, index_col=label_col)
 
     def _initialize_properties(self):
         """
@@ -241,7 +247,8 @@ class Meda(NeuroDataResource):
         z_dim, y_dim, x_dim = [(i - 1) // 2 for i in size]
         z_max, y_max, x_max = self.max_dimensions
 
-        grid = np.array([-z_dim, z_dim + 1, -y_dim, y_dim + 1, -x_dim, x_dim + 1])
+        grid = np.array(
+            [-z_dim, z_dim + 1, -y_dim, y_dim + 1, -x_dim, x_dim + 1])
 
         dimensions = np.repeat(self.centroids.values, 2, axis=1) + grid
 
@@ -324,9 +331,12 @@ class Meda(NeuroDataResource):
 
         df = pd.concat(out, axis=1)
         if to_file:
-            path = 
-            fname = '_'.join([datetime.today().strftime('%Y%m%d'), self.experiment, self._pyfunc]) + '.csv'
-            
+            path = ''
+            fname = '_'.join([
+                datetime.today().strftime('%Y%m%d'), self.experiment,
+                self._pyfunc
+            ]) + '.csv'
+
             df.to_csv()
         return df
 
