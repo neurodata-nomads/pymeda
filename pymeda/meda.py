@@ -38,7 +38,7 @@ class Meda:
             notebook or div
         """
         self._ds = lds.CSVDataSet(csv_file, name=title, index_column=index_col)
-        self._ds_normed = lds.DataSet(self.ds.D.apply(zscore), name=title)
+        self._ds_normed = lds.DataSet(self._ds.D.apply(zscore), name=title)
         self.showticklabels = showticklabels
         self.cluster_levels = cluster_levels
         self.mode = mode
@@ -69,7 +69,14 @@ class Meda:
         """
         cluster_ds = lcl.HGMMClustering(
             self._ds_normed, levels=self.cluster_levels)
-        self.cluster_ds = cluster_ds
+        self._cluster_ds = cluster_ds
+
+    def cluster_dendrogram(self):
+        if not self._cluster_ds:
+            self._compute_clusters()
+
+        return lpl.HGMMClusterMeansDendrogram(
+            self._cluster_ds, mode=self.mode).plot()
 
     def cluster_means_stacked(self):
         """
@@ -79,7 +86,7 @@ class Meda:
             self._compute_clusters()
 
         return lpl.HGMMStackedClusterMeansHeatmap(
-            self.cluster_ds,
+            self._cluster_ds,
             mode=self.mode).plot(showticklabels=self.showticklabels)
 
     def cluster_means_heatmap(self):
@@ -90,7 +97,7 @@ class Meda:
             self._compute_clusters()
 
         return lpl.HGMMClusterMeansLevelHeatmap(
-            self.cluster_ds,
+            self._cluster_ds,
             mode=self.mode).plot(showticklabels=self.showticklabels)
 
     def cluster_means_lines(self):
@@ -101,7 +108,7 @@ class Meda:
             self._compute_clusters()
 
         return lpl.HGMMClusterMeansLevelLines(
-            self.cluster_ds,
+            self._cluster_ds,
             mode=self.mode).plot(showticklabels=self.showticklabels)
 
     def cluster_pair_plot(self):
@@ -111,36 +118,40 @@ class Meda:
         if not self._cluster_ds:
             self._compute_clusters()
 
-        return lpl.HGMMPairsPlot(self.cluster_ds, mode=self.mode).plot()
+        return lpl.HGMMPairsPlot(self._cluster_ds, mode=self.mode).plot()
 
     def location_lines(self):
         """
         Generate location estimates using line graph
         """
         return lpl.LocationLines(
-            self.ds, mode=self.mode).plot(showticklabels=self.showticklabels)
+            self._ds, mode=self.mode).plot(showticklabels=self.showticklabels)
 
     def location_heatmap(self):
         """
         Generate location estimates using heatmap
         """
         return lpl.LocationHeatmap(
-            self.ds, mode=self.mode).plot(showticklabels=self.showticklabels)
+            self._ds, mode=self.mode).plot(showticklabels=self.showticklabels)
 
     def d1_heatmap(self):
         """
         Generate 1d heatmaps
         """
-        if self.ds.n > 1000:  #if sample size is > 1000, run kmeans++ initialization
+        if self._ds.n > 1000:  #if sample size is > 1000, run kmeans++ initialization
             ret = knor.Kmeans(
-                self.ds_normed.D.values, 1000, max_iters=0, init='kmeanspp')
+                self._ds_normed.D.values, 1000, max_iters=0, init='kmeanspp')
             centroids_df = pd.DataFrame(
-                ret.get_centroids(), columns=self.ds.d.columns)
-            centroids_ds = lds.DataSet(centroids_df, name=self.ds.name)
+                ret.get_centroids(), columns=self._ds.D.columns)
+            centroids_ds = lds.DataSet(centroids_df, name=self._ds.name)
+
             return lpl.HistogramHeatmap(
                 centroids_ds,
                 mode=self.mode).plot(showticklabels=self.showticklabels)
         else:
             return lpl.HistogramHeatmap(
-                self.ds,
+                self._ds_normed,
                 mode=self.mode).plot(showticklabels=self.showticklabels)
+
+    def run_all(self):
+        pass
