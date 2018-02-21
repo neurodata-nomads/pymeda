@@ -2,3 +2,5 @@ __pycache__/
 .ipynb_checkpoints/
 api_key.txt
 .vscode/
+Pipfile
+Pipfile.lock
