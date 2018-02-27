@@ -1,11 +1,12 @@
 # PyMEDA
+[![](https://img.shields.io/pypi/v/pymeda/svg)](https://pypi.python.org/pypi/pymeda)
+![](https://travis-ci.org/neurodata-nomads/pymeda.svg?branch=master)
 PyMEDA is a python package for matrix exploratory data analysis (MEDA). 
 
 ## System Requirements
 The software has been tested macOS Sierra 10.12.6 (2.9GHz Intel Core i5).
 
 ### Python depedencies:
-colorlover==0.2.1<br/>
 jupyter==1.0.0<br/>
 nose2==0.6.5<br/>
 numpy==1.13.1<br/>
