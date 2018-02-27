@@ -12,7 +12,7 @@ from os import path
 
 here = path.abspath(path.dirname(__file__))
 
-VERSION = '0.1.0'
+VERSION = '0.1.1'
 
 setup(
     name='pymeda',
@@ -28,7 +28,7 @@ setup(
     install_requires=[
         'colorlover==0.2.1', 'jupyter==1.0.0', 'numpy==1.13.1',
         'pandas==0.21.0', 'plotly==2.2.3', 'scipy==1.0.0', 'redlemur==0.10.0',
-        'scikit-learn==0.19.1', 'knor', 'cython', 'boto3==1.4.7',
+        'scikit-learn==0.19.1', 'cython', 'knor', 'boto3==1.4.7',
         'nilearn==0.4.0', 'matplotlib==2.1.0', 'nose', 'imageio'
     ],
     package_data={
