@@ -8,6 +8,8 @@ import knor
 from scipy.stats import zscore
 from wrappers import cached_property
 
+from plotly.offline import (download_plotlyjs, init_notebook_mode)
+
 
 class Meda:
     """
@@ -42,7 +44,28 @@ class Meda:
         self.showticklabels = showticklabels
         self.cluster_levels = cluster_levels
         self.mode = mode
+        if mode == 'notebook':
+            init_notebook_mode()
         self._cluster_ds = None
+
+    def d1_heatmap(self):
+            """
+        Generate 1d heatmaps
+        """
+        if self._ds.n > 1000:  #if sample size is > 1000, run kmeans++ initialization
+            ret = knor.Kmeans(
+                self._ds_normed.D.values, 1000, max_iters=0, init='kmeanspp')
+            centroids_df = pd.DataFrame(
+                ret.get_centroids(), columns=self._ds.D.columns)
+            centroids_ds = lds.DataSet(centroids_df, name=self._ds.name)
+
+            return lpl.HistogramHeatmap(
+                centroids_ds,
+                mode=self.mode).plot(showticklabels=self.showticklabels)
+        else:
+            return lpl.HistogramHeatmap(
+                self._ds_normed,
+                mode=self.mode).plot(showticklabels=self.showticklabels)
 
     def scree_plot(self):
         """
@@ -133,25 +156,6 @@ class Meda:
         """
         return lpl.LocationHeatmap(
             self._ds, mode=self.mode).plot(showticklabels=self.showticklabels)
-
-    def d1_heatmap(self):
-        """
-        Generate 1d heatmaps
-        """
-        if self._ds.n > 1000:  #if sample size is > 1000, run kmeans++ initialization
-            ret = knor.Kmeans(
-                self._ds_normed.D.values, 1000, max_iters=0, init='kmeanspp')
-            centroids_df = pd.DataFrame(
-                ret.get_centroids(), columns=self._ds.D.columns)
-            centroids_ds = lds.DataSet(centroids_df, name=self._ds.name)
-
-            return lpl.HistogramHeatmap(
-                centroids_ds,
-                mode=self.mode).plot(showticklabels=self.showticklabels)
-        else:
-            return lpl.HistogramHeatmap(
-                self._ds_normed,
-                mode=self.mode).plot(showticklabels=self.showticklabels)
 
     def run_all(self):
         pass
