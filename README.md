@@ -10,7 +10,7 @@ PyMEDA is a python package for matrix exploratory data analysis (MEDA). It is in
 - [Usage](#usage)
 
 ## Overview
-**PyMEDA** is a data visualization package for understanding high dimensional data. It is powered by Redlemur and Plot.ly.
+**PyMEDA** is a data visualization package for understanding high dimensional data. It is powered by [Redlemur](https://github.com/neurodatadesign/lemur "Redlemur") and Plot.ly.
 
 ## System Requirements
   - **PyMEDA** was developed in Python 3.6. Currently, there is no plan to support Python 2.
@@ -64,9 +64,11 @@ date. Update then to at least Version 8
     ImportError: No module named Cython.Build
 
 #### Solution
-Install Cython via `pip install -U cython`. Then install **PyMEDA** via one of the methods above.
+Install Cython via `pip install --upgrade cython`. This will install Cython, 
+then install **PyMEDA** via one of the methods above.
 
 ## Usage
 It is **_highly_** recommended that you use **PyMEDA** inside Jupyter notebook, which allows **PyMEDA** visualizations to be easily embedded. However, **PyMEDA** also supports embedding in static HTML pages. 
 
-Demo
+Please see [demo](https://github.com/neurodata-nomads/pymeda/blob/master/notebooks/Demo.ipynb "PyMEDA demo using iris dataset")
+ here to view the usages using the iris dataset.
