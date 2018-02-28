@@ -16,34 +16,45 @@ from jinja2 import Environment, PackageLoader, select_autoescape, FileSystemLoad
 
 
 class Meda:
-    """
-    TODO: Write docs. 
+    """ 
+    A meda object contains the data that will be plotted through the
+    class functions. 
+
+    Parameters
+    ----------
+    data : str or pd.DataFrame object
+        String that specifies path to a csv file or 
+        pd.DataFrame object.
+    title : str
+        Title of the dataset.
+    index_col : str, optional
+        Name of the index column in csv file if `data` is a string.
+    cluster_levels : int (default=1)
+        Number of levels for hierarchial clustering (e.g. 1 means running hierarchial
+        clustering only once. 2 means run twice).
+    showticklabels : bool, optional
+        If default value is passed (True), all the dimension labels will be displayed.
+        Set to False to hide all dimension labels. 
+    mode : str, optional
+        String that determines if plotting in a Jupyter notebook or for static
+        HTML embedding. Defaults to 'notebook'. Set to 'div' for HTML embedding.
     """
 
     def __init__(self,
-                 csv_file,
+                 data,
                  title,
                  index_col=None,
                  cluster_levels=1,
                  showticklabels=True,
                  mode='notebook'):
-        """
-        Parameters
-        ----------
-        csv_file : str
-            Path to the csv_file to plot
-        title : str
-            Title of the dataset.
-        index_col : str, optional
-            Name of the index column in csv_file
-        cluster_levels : int (default=1)
-            Number of levels for hierarchial clustering
-        showticklabels : bool
-            Default True
-        mode : str
-            notebook or div
-        """
-        self._ds = lds.CSVDataSet(csv_file, name=title, index_column=index_col)
+        #Check if input is a path to csv file or pd.DataFrame object
+        if isinstance(data, str):
+            self._ds = lds.CSVDataSet(data, name=title, index_column=index_col)
+        elif isinstance(data, pd.DataFrame):
+            self._ds = lds.DataSet(data, name=title)
+        else:
+            raise TypeError
+
         self._ds_normed = lds.DataSet(self._ds.D.apply(zscore), name=title)
         self._showticklabels = showticklabels
         self._cluster_levels = cluster_levels
@@ -52,9 +63,22 @@ class Meda:
             init_notebook_mode()
         self._cluster_ds = None
 
+    def _compute_clusters(self, cluster_mode=None):
+        """
+        Run hierarchial GMM clustering
+
+        Parameters
+        ----------
+        cluster_mode : str 
+            Not implemented yet
+        """
+        cluster_ds = lcl.HGMMClustering(
+            self._ds_normed, levels=self._cluster_levels)
+        self._cluster_ds = cluster_ds
+
     def d1_heatmap(self, mode=None):
         """
-        Generate 1d heatmaps
+        Generate 1d heatmap
         """
         if not mode:
             mode = self.mode
@@ -94,20 +118,10 @@ class Meda:
             self._ds_normed,
             mode=mode).plot(showticklabels=self._showticklabels)
 
-    def _compute_clusters(self, cluster_mode=None):
-        """
-        Run hierarchial GMM clustering
-
-        Parameters
-        ----------
-        cluster_mode : str 
-            Not implemented yet
-        """
-        cluster_ds = lcl.HGMMClustering(
-            self._ds_normed, levels=self._cluster_levels)
-        self._cluster_ds = cluster_ds
-
     def cluster_dendrogram(self, mode=None):
+        """
+        Generate hi
+        """
         if not mode:
             mode = self._mode
 
@@ -192,6 +206,13 @@ class Meda:
             self._ds, mode=mode).plot(showticklabels=self._showticklabels)
 
     def run_all(self, mode=None):
+        """
+        Run all plots available in PyMEDA.
+
+        Parameters
+        ----------
+        mode : str, optional 
+        """
         if not mode:
             mode = self._mode
 
@@ -213,11 +234,11 @@ class Meda:
 
         if mode == 'div':
             out = {
-                "Histogram Heatmap": histogram_heatmap,
+                "1-d Heatmap": histogram_heatmap,
                 "Location Heatmap": location_heatmap,
                 "Location Lines": location_lines,
-                "Scree Plot": scree_plot,
                 "Correlation Matrix": corr_matrix,
+                "Scree Plot": scree_plot,
                 "Hierarchical GMM Dendogram": hgmm_dendogram,
                 "Pair Plot": hgmm_pair_plot,
                 "Cluster Stacked Means": hgmm_stacked_mean,
