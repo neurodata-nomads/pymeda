@@ -55,8 +55,7 @@ cython==0.27.3
     error: command ‘/usr/bin/clang’ failed with exit status 1
 
 #### Solution
-This usually occurs on Mac when your Xcode and Xcode command line tools are out of 
-date. Update then to at least Version 8
+Update your Xcode and Xcode command line tools to the latest version.
 
 #### 2. Cython installation error
 
