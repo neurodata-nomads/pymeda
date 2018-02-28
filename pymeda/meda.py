@@ -80,7 +80,7 @@ class Meda:
         Generate 1d heatmap
         """
         if not mode:
-            mode = self.mode
+            mode = self._mode
 
         if self._ds.n > 1000:  #if sample size is > 1000, run kmeans++ initialization
             ret = knor.Kmeans(
@@ -102,7 +102,7 @@ class Meda:
         Genereate scree plot of PCA results
         """
         if not mode:
-            mode = self.mode
+            mode = self._mode
 
         return lpl.ScreePlotter(self._ds_normed, mode=mode).plot()
 
@@ -111,7 +111,7 @@ class Meda:
         Correlation matrix 
         """
         if not mode:
-            mode = self.mode
+            mode = self._mode
 
         return lpl.CorrelationMatrix(
             self._ds_normed,
@@ -266,7 +266,6 @@ class Meda:
         #Using package directory
         path = '/templates/'
         template_path = pkg_resources.resource_filename(__name__, path)
-        print(template_path)
 
         env = Environment(loader=FileSystemLoader([template_path]))
         template = env.get_template('report.html')
