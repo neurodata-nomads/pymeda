@@ -1,6 +1,7 @@
 # PyMEDA
 [![](https://img.shields.io/pypi/v/pymeda/svg)](https://pypi.python.org/pypi/pymeda)
 ![](https://travis-ci.org/neurodata-nomads/pymeda.svg?branch=master)
+
 PyMEDA is a python package for matrix exploratory data analysis (MEDA). 
 
 ## System Requirements
