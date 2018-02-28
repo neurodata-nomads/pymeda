@@ -1,53 +1,70 @@
 # PyMEDA
-[![](https://img.shields.io/pypi/v/pymeda/svg)](https://pypi.python.org/pypi/pymeda)
 ![](https://travis-ci.org/neurodata-nomads/pymeda.svg?branch=master)
 
 PyMEDA is a python package for matrix exploratory data analysis (MEDA). 
 
-## System Requirements
-The software has been tested macOS Sierra 10.12.6 (2.9GHz Intel Core i5).
+## Contents
+- [Overview](#overview)
+- [System Requirements](#system-requirements)
+- [Installation Guide](#installation-guide)
+- [Usage](#usage)
 
-### Python depedencies:
-jupyter==1.0.0<br/>
-nose2==0.6.5<br/>
-numpy==1.13.1<br/>
-pandas==0.21.0<br/>
-plotly==2.2.3<br/>
-scikit-image==0.13.1<br/>
-scipy==1.0.0<br/>
--e git://github.com/j1c/lemur.git@clustering#egg=redlemur<br/>
-scikit-learn==0.19.1<br/>
+## Overview
+**PyMEDA** is a data visualization package for understanding high dimensional data. It is powered by Redlemur and Plot.ly.
+
+## System Requirements
+  - **PyMEDA** was developed in Python 3.6. Currently, there is no plan to support Python 2.
+  - Was developed and tested primarily on Mac OS (Sierra 10.12.6).
+  - Requires no non-standard hardware to run.
+  - Complete visualizations take roughly 2-3 minutes for data with >20 dimensions and >10<sup>6</sup> data points on a laptop (2.9GHz Intel i5, 8 GB RAM).
+
+The following lists the dependencies for **PyMEDA**. Note that this not a comprehensive list of all the dependencies. Please check via `pip freeze` once **PyMEDA** is installed. 
+
+```
+jupyter==1.0.0,
+numpy==1.13.1,
+pandas==0.21.0,
+scikit-learn==0.19.1,
+plotly==2.2.3,
+redlemur==0.10.0
+```
 
 ## Installation Guide
-This assumes you have these tools already installed:
+**PyMEDA** can be installed either from `pip` or Github as shown below. 
 
-1. Python 3.6 ([Download](https://www.python.org/downloads/))
-2. Git ([Installation](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git))
-2. Virtualenv ([Installation and usage](https://help.dreamhost.com/hc/en-us/articles/115000695551-Installing-and-using-Python-s-virtualenv-using-Python-3))
-3. Virtualenvwrapper ([Installation](http://virtualenvwrapper.readthedocs.io/en/latest/install.html))
+### Install from pip
 
-If you do not have these tools installed, you can click the links to download and install them. If you do have these tools installed, you can go ahead with the following. It should take about 2-3 minutes.
-1. Clone this repository
-    ```
-    git clone https://github.com/neurodata-nomads/pymeda.git
-    ```
-2. Navigate to the repository directory
-    ```
+    pip install pymeda
+
+### Install from Github
+
+    git clone https://github.com/neurodata-nomads/pymeda
     cd pymeda
-    ```
-3. Create a virtualenvironment called synaptome
-    ```
-    mkvirtualenv -p python3 pymeda
-    ```
-2. Install the dependencies using pip and requirements.txt
-    ```
-    pip install -r requirements.txt
-    ```
-3. Make the synaptome virtual environment available in jupyter notebook.
-    ```
-    python -m ipykernel install --user --name=pymeda
-    ```
-4. Run jupyter notebook
-    ```
-    jupyter notebook
-    ```
+    python setup.py install
+
+### Potential Installation Errors
+#### 1. Xcode is out of date
+
+    In file included from knor/cknor/libkcommon/clusters.cpp:23:
+    knor/cknor/libkcommon/util.hpp:29:10: fatal error: ‘random’ file not found
+    #include <random>
+             ^
+    1 error generated.
+    error: command ‘/usr/bin/clang’ failed with exit status 1
+
+#### Solution
+This usually occurs on Mac when your Xcode and Xcode command line tools are out of 
+date. Update then to at least Version 8
+
+#### 2. Cython installation error
+
+    from Cython.Build import cythonize
+    ImportError: No module named Cython.Build
+
+#### Solution
+Install Cython via `pip install -U cython`. Then install **PyMEDA** via one of the methods above.
+
+## Usage
+It is **_highly_** recommended that you use **PyMEDA** inside Jupyter notebook, which allows **PyMEDA** visualizations to be easily embedded. However, **PyMEDA** also supports embedding in static HTML pages. 
+
+Demo
