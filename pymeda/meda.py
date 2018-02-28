@@ -9,7 +9,6 @@ import lemur.clustering as lcl
 import knor
 
 from scipy.stats import zscore
-from .wrappers import cached_property
 
 from plotly.offline import (download_plotlyjs, init_notebook_mode)
 from jinja2 import Environment, PackageLoader, select_autoescape, FileSystemLoader
