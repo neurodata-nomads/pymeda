@@ -12,7 +12,15 @@ from os import path
 
 here = path.abspath(path.dirname(__file__))
 
-VERSION = '0.1.1'
+VERSION = '0.1.2'
+
+## Install Cython
+try:
+    import Cython
+except ImportError:
+    import pip
+    pip_args = ['install', 'Cython']
+    pip.main(pip_args)
 
 setup(
     name='pymeda',
@@ -25,11 +33,12 @@ setup(
     license='MIT',
     keywords='data visualization analysis',
     packages=['pymeda'],  # Required
+    setup_requires=['Cython'],
     install_requires=[
         'colorlover==0.2.1', 'jupyter==1.0.0', 'numpy==1.13.1',
         'pandas==0.21.0', 'plotly==2.2.3', 'scipy==1.0.0', 'redlemur==0.10.0',
-        'scikit-learn==0.19.1', 'cython', 'knor', 'boto3==1.4.7',
-        'nilearn==0.4.0', 'matplotlib==2.1.0', 'nose', 'imageio'
+        'scikit-learn==0.19.1', 'boto3==1.4.7', 'nilearn==0.4.0',
+        'matplotlib==2.1.0', 'nose', 'imageio', 'Cython', 'knor'
     ],
     package_data={
         'pymeda': ['*.html'],
