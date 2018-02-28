@@ -1,7 +1,7 @@
 # PyMEDA
 ![](https://travis-ci.org/neurodata-nomads/pymeda.svg?branch=master)
 
-PyMEDA is a python package for matrix exploratory data analysis (MEDA). 
+PyMEDA is a python package for matrix exploratory data analysis (MEDA). It is inspired by the MEDA R package.
 
 ## Contents
 - [Overview](#overview)
@@ -26,7 +26,9 @@ numpy==1.13.1,
 pandas==0.21.0,
 scikit-learn==0.19.1,
 plotly==2.2.3,
-redlemur==0.10.0
+redlemur==0.10.0,
+knor==0.0.1,
+cython==0.27.3
 ```
 
 ## Installation Guide
@@ -42,7 +44,7 @@ redlemur==0.10.0
     cd pymeda
     python setup.py install
 
-### Potential Installation Errors
+### Potential Installation Errors Due to Cython Dependency
 #### 1. Xcode is out of date
 
     In file included from knor/cknor/libkcommon/clusters.cpp:23:
