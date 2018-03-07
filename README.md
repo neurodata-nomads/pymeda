@@ -66,6 +66,18 @@ Update your Xcode and Xcode command line tools to the latest version.
 Install Cython via `pip install --upgrade cython`. This will install Cython, 
 then install **PyMEDA** via one of the methods above.
 
+#### 3. GCC compiler not installed
+
+    knor/cknor/libkcommon/util.cpp:27:10: fatal error: numa.h: No such file or directory
+     #include <numa.h>
+              ^~~~~~~~
+    compilation terminated.
+    error: command 'gcc' failed with exit status 1
+
+#### Solution
+Install GCC compiler. Use `apt-get install build essential` or `yum install build-essential` depending
+on your linux distribution.
+
 ## Usage
 It is **_highly_** recommended that you use **PyMEDA** inside Jupyter notebook, which allows **PyMEDA** visualizations to be easily embedded. However, **PyMEDA** also supports embedding in static HTML pages. 
 
