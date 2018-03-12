@@ -14,7 +14,7 @@ PyMEDA is a python package for matrix exploratory data analysis (MEDA). It is in
 
 ## System Requirements
   - **PyMEDA** was developed in Python 3.6. Currently, there is no plan to support Python 2.
-  - Was developed and tested primarily on Mac OS (Sierra 10.12.6).
+  - Was developed and tested primarily on Mac OS (Sierra 10.12.6). It does not currently support Windows.
   - Requires no non-standard hardware to run.
   - Complete visualizations take roughly 2-3 minutes for data with >20 dimensions and >10<sup>6</sup> data points on a laptop (2.9GHz Intel i5, 8 GB RAM).
 
