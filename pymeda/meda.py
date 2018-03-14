@@ -76,7 +76,16 @@ class Meda:
         cluster_ds.cluster()
         self._cluster_ds = cluster_ds
 
-    def raw_heatmap(self, mode=None):
+    def ridgeline(self, mode=None):
+        """
+        Generate ridgeline plots of all observations.
+        """
+        if not mode:
+            mode = self._mode
+        
+        return lpl.RidgeLine(self._ds_normed, mode=mode).plot()
+
+    def heatmap(self, mode=None):
         """
         Generate heatmap of all observations
         If n > 1000, then a kmeans++ initializaiton is performed to derive 
@@ -100,7 +109,7 @@ class Meda:
                 self._ds_normed,
                 mode=mode).plot()
 
-    def d1_heatmap(self, mode=None):
+    def histogram_heatmap(self, mode=None):
         """
         Generate 1d heatmap
         """
@@ -144,7 +153,7 @@ class Meda:
 
     def cluster_dendrogram(self, mode=None):
         """
-        Generate hi
+        Generate GMM dendrogram
         """
         if not mode:
             mode = self._mode
@@ -241,7 +250,8 @@ class Meda:
             mode = self._mode
 
         #Make plots and save as div
-        histogram_heatmap = self.d1_heatmap(mode=mode)
+        heatmap = self.heatmap(mode=mode)
+        ridgeline = self.ridgeline(mode=mode)
         location_heatmap = self.location_heatmap(mode=mode)
         location_lines = self.location_lines(mode=mode)
 
@@ -250,7 +260,7 @@ class Meda:
 
         #HGMM plots
         hgmm_dendogram = self.cluster_dendrogram(mode=mode)
-        if not self._ds.n > 10000:
+        if not self._ds.n > 1000:
             hgmm_pair_plot = self.cluster_pair_plot(mode=mode)
         hgmm_stacked_mean = self.cluster_means_stacked(mode=mode)
         hgmm_cluster_mean = self.cluster_means_heatmap(mode=mode)
@@ -258,7 +268,8 @@ class Meda:
 
         if mode == 'div':
             out = {
-                "1-d Heatmap": histogram_heatmap,
+                "Representative Heatmap": heatmap,
+                "Ridge Line Plot": ridgeline,
                 "Location Heatmap": location_heatmap,
                 "Location Lines": location_lines,
                 "Correlation Matrix": corr_matrix,
