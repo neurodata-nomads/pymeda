@@ -103,7 +103,7 @@ class Meda:
 
             return lpl.Heatmap(
                 centroids_ds,
-                mode=mode).plot()
+                mode=mode).plot(showticklabels=True)
         else:
             return lpl.Heatmap(
                 self._ds_normed,

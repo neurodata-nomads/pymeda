@@ -12,7 +12,7 @@ from os import path
 
 here = path.abspath(path.dirname(__file__))
 
-VERSION = '0.1.4'
+VERSION = '0.1.5'
 
 # Install Cython
 try:
@@ -27,7 +27,7 @@ setup(
     version=VERSION,
     description='Matrix Exploratory Data Analysis',
     url='https://github.com/neurodata-nomads/pymeda',
-    download_url='https://github.com/neurodata-nomads/pymeda/tarball/0.1.4',
+    download_url='https://github.com/neurodata-nomads/pymeda/tarball/0.1.5',
     author='Jaewon Chung',
     author_email='j1c@jhu.edu',
     license='MIT',
