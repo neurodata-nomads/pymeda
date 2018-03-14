@@ -140,7 +140,7 @@ class Meda:
         if not self._cluster_ds:
             self._compute_clusters()
 
-        return lpl.HGMMStackedClusterMeansHeatmap(
+        return lpl.HierarchicalStackedClusterMeansHeatmap(
             self._cluster_ds,
             mode=mode).plot(showticklabels=self._showticklabels)
 
