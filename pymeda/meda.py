@@ -73,7 +73,32 @@ class Meda:
         """
         cluster_ds = lcl.HGMMClustering(
             self._ds_normed, levels=self._cluster_levels)
+        cluster_ds.cluster()
         self._cluster_ds = cluster_ds
+
+    def raw_heatmap(self, mode=None):
+        """
+        Generate heatmap of all observations
+        If n > 1000, then a kmeans++ initializaiton is performed to derive 
+        1000 cluster centers. 
+        """
+        if not mode:
+            mode = self._mode
+
+        if self._ds.n > 1000:  #if sample size is > 1000, run kmeans++ initialization
+            ret = knor.Kmeans(
+                self._ds_normed.D.values, 1000, max_iters=0, init='kmeanspp')
+            centroids_df = pd.DataFrame(
+                ret.get_centroids(), columns=self._ds.D.columns)
+            centroids_ds = lds.DataSet(centroids_df, name=self._ds.name)
+
+            return lpl.Heatmap(
+                centroids_ds,
+                mode=mode).plot()
+        else:
+            return lpl.Heatmap(
+                self._ds_normed,
+                mode=mode).plot()
 
     def d1_heatmap(self, mode=None):
         """
@@ -127,7 +152,7 @@ class Meda:
         if not self._cluster_ds:
             self._compute_clusters()
 
-        return lpl.HGMMClusterMeansDendrogram(
+        return lpl.HierarchicalClusterMeansDendrogram(
             self._cluster_ds, mode=mode).plot()
 
     def cluster_means_stacked(self, mode=None):
@@ -154,7 +179,7 @@ class Meda:
         if not self._cluster_ds:
             self._compute_clusters()
 
-        return lpl.HGMMClusterMeansLevelHeatmap(
+        return lpl.ClusterMeansLevelHeatmap(
             self._cluster_ds,
             mode=mode).plot(showticklabels=self._showticklabels)
 
@@ -168,7 +193,7 @@ class Meda:
         if not self._cluster_ds:
             self._compute_clusters()
 
-        return lpl.HGMMClusterMeansLevelLines(
+        return lpl.ClusterMeansLevelLines(
             self._cluster_ds,
             mode=mode).plot(showticklabels=self._showticklabels)
 
@@ -182,7 +207,7 @@ class Meda:
         if not self._cluster_ds:
             self._compute_clusters()
 
-        return lpl.HGMMPairsPlot(self._cluster_ds, mode=mode).plot()
+        return lpl.ClusterPairsPlot(self._cluster_ds, mode=mode).plot()
 
     def location_lines(self, mode=None):
         """
