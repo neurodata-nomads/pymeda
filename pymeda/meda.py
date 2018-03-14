@@ -107,7 +107,7 @@ class Meda:
         else:
             return lpl.Heatmap(
                 self._ds_normed,
-                mode=mode).plot()
+                mode=mode).plot(showticklabels=True)
 
     def histogram_heatmap(self, mode=None):
         """
