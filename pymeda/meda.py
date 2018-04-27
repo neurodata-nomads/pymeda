@@ -82,7 +82,7 @@ class Meda:
         """
         if not mode:
             mode = self._mode
-        
+
         return lpl.RidgeLine(self._ds_normed, mode=mode).plot()
 
     def heatmap(self, mode=None):
@@ -102,12 +102,10 @@ class Meda:
             centroids_ds = lds.DataSet(centroids_df, name=self._ds.name)
 
             return lpl.Heatmap(
-                centroids_ds,
-                mode=mode).plot(showticklabels=True)
+                centroids_ds, mode=mode).plot(showticklabels=True)
         else:
             return lpl.Heatmap(
-                self._ds_normed,
-                mode=mode).plot(showticklabels=True)
+                self._ds_normed, mode=mode).plot(showticklabels=True)
 
     def histogram_heatmap(self, mode=None):
         """
@@ -267,19 +265,33 @@ class Meda:
         hgmm_cluster_means = self.cluster_means_lines(mode=mode)
 
         if mode == 'div':
-            out = {
-                "Representative Heatmap": heatmap,
-                "Ridge Line Plot": ridgeline,
-                "Location Heatmap": location_heatmap,
-                "Location Lines": location_lines,
-                "Correlation Matrix": corr_matrix,
-                "Scree Plot": scree_plot,
-                "Hierarchical GMM Dendogram": hgmm_dendogram,
-                "Pair Plot": hgmm_pair_plot,
-                "Cluster Stacked Means": hgmm_stacked_mean,
-                "Cluster Mean Heatmap": hgmm_cluster_mean,
-                "Cluster Mean Lines": hgmm_cluster_means
-            }
+            if not self._ds.n > 1000:
+                out = {
+                    "Representative Heatmap": heatmap,
+                    "Ridge Line Plot": ridgeline,
+                    "Location Heatmap": location_heatmap,
+                    "Location Lines": location_lines,
+                    "Correlation Matrix": corr_matrix,
+                    "Scree Plot": scree_plot,
+                    "Hierarchical GMM Dendogram": hgmm_dendogram,
+                    "Pair Plot": hgmm_pair_plot,
+                    "Cluster Stacked Means": hgmm_stacked_mean,
+                    "Cluster Mean Heatmap": hgmm_cluster_mean,
+                    "Cluster Mean Lines": hgmm_cluster_means
+                }
+            else:
+                out = {
+                    "Representative Heatmap": heatmap,
+                    "Ridge Line Plot": ridgeline,
+                    "Location Heatmap": location_heatmap,
+                    "Location Lines": location_lines,
+                    "Correlation Matrix": corr_matrix,
+                    "Scree Plot": scree_plot,
+                    "Hierarchical GMM Dendogram": hgmm_dendogram,
+                    "Cluster Stacked Means": hgmm_stacked_mean,
+                    "Cluster Mean Heatmap": hgmm_cluster_mean,
+                    "Cluster Mean Lines": hgmm_cluster_means
+                }
             return out
 
     def generate_report(self, out):
