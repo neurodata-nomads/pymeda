@@ -1,6 +1,4 @@
 # PyMEDA
-![](https://travis-ci.org/neurodata-nomads/pymeda.svg?branch=master)
-
 PyMEDA is a python package for matrix exploratory data analysis (MEDA). It is inspired by the MEDA R package.
 
 ## Contents
