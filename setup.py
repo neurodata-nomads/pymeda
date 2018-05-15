@@ -12,7 +12,7 @@ from os import path
 
 here = path.abspath(path.dirname(__file__))
 
-VERSION = '0.1.5'
+VERSION = '0.1.6'
 
 # Install Cython
 try:
