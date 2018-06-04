@@ -12,15 +12,22 @@ from os import path
 
 here = path.abspath(path.dirname(__file__))
 
-VERSION = '0.1.7'
+VERSION = '0.1.9'
 
 # Install Cython
 try:
     import Cython
 except ImportError:
     import pip
-    pip_args = ['install', 'Cython']
-    pip.main(pip_args)
+
+    # For installing Cython due to pip.main removal in Pip10
+    import subprocess
+    import sys
+
+    subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'Cython'])
+    #pip_args = ['install', 'Cython']
+    #pip.main(pip_args)
+    import Cython
 
 setup(
     name='pymeda',
@@ -35,9 +42,9 @@ setup(
     packages=['pymeda'],  # Required
     setup_requires=['Cython'],
     install_requires=[
+        'Cython',
         'jupyter==1.0.0',
         'redlemur',
-        'Cython',
         'knor==0.0.1',
     ],
     #dependency_links=['https://github.com/j1c/lemur#egg=redlemur'],

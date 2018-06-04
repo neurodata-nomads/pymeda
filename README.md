@@ -16,14 +16,10 @@ PyMEDA is a python package for matrix exploratory data analysis (MEDA). It is in
   - Requires no non-standard hardware to run.
   - Complete visualizations take roughly 2-3 minutes for data with >20 dimensions and >10<sup>6</sup> data points on a laptop (2.9GHz Intel i5, 8 GB RAM).
 
-The following lists the dependencies for **PyMEDA**. Note that this not a comprehensive list of all the dependencies. Please check via `pip freeze` once **PyMEDA** is installed. 
+The following lists the dependencies for **PyMEDA**. Note that this not a comprehensive list of all the dependencies. Please check via `pip freeze` once **PyMEDA** is installed.
 
 ```
 jupyter==1.0.0,
-numpy==1.13.1,
-pandas==0.21.0,
-scikit-learn==0.19.1,
-plotly==2.2.3,
 redlemur,
 knor==0.0.1,
 cython==0.27.3
