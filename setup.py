@@ -19,14 +19,11 @@ try:
     import Cython
 except ImportError:
     import pip
-
     # For installing Cython due to pip.main removal in Pip10
     import subprocess
     import sys
-
     subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'Cython'])
-    #pip_args = ['install', 'Cython']
-    #pip.main(pip_args)
+
     import Cython
 
 setup(
