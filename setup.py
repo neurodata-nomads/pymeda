@@ -12,7 +12,7 @@ from os import path
 
 here = path.abspath(path.dirname(__file__))
 
-VERSION = '0.1.6'
+VERSION = '0.1.7'
 
 # Install Cython
 try:
@@ -35,22 +35,10 @@ setup(
     packages=['pymeda'],  # Required
     setup_requires=['Cython'],
     install_requires=[
-        'colorlover==0.2.1',
         'jupyter==1.0.0',
-        'numpy==1.13.1',
-        'pandas==0.21.0',
-        'plotly==2.2.3',
-        'scipy==1.0.0',
         'redlemur',
-        'scikit-learn==0.19.1',
-        'boto3==1.4.7',
-        'nilearn==0.4.0',
-        'matplotlib==2.1.0',
-        'nose',
-        'imageio',
         'Cython',
         'knor==0.0.1',
-        'networkx'
     ],
     #dependency_links=['https://github.com/j1c/lemur#egg=redlemur'],
     package_data={

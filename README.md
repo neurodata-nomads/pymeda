@@ -24,13 +24,13 @@ numpy==1.13.1,
 pandas==0.21.0,
 scikit-learn==0.19.1,
 plotly==2.2.3,
-redlemur==0.10.0,
+redlemur,
 knor==0.0.1,
 cython==0.27.3
 ```
 
 ## Installation Guide
-**PyMEDA** can be installed either from `pip` or Github as shown below. 
+**PyMEDA** can be installed either from `pip` or Github as shown below.
 
 ### Install from pip
 
@@ -61,7 +61,7 @@ Update your Xcode and Xcode command line tools to the latest version.
     ImportError: No module named Cython.Build
 
 #### Solution
-Install Cython via `pip install --upgrade cython`. This will install Cython, 
+Install Cython via `pip install --upgrade cython`. This will install Cython,
 then install **PyMEDA** via one of the methods above.
 
 #### 3. GCC compiler not installed
