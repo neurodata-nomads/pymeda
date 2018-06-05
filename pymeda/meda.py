@@ -1,5 +1,6 @@
 import pkg_resources
 import time
+from collections import OrderedDict
 
 import numpy as np
 import pandas as pd
@@ -266,6 +267,22 @@ class Meda:
 
         if mode == 'div':
             if not self._ds.n > 1000:
+                titles = [
+                    "Representative Heatmap", "Ridge Line Plot",
+                    "Location Heatmap", "Location Lines", "Correlation Matrix",
+                    "Scree Plot", "Hierarchical GMM Dendogram", "Pair Plot",
+                    "Cluster Stacked Means", "Cluster Mean Heatmap",
+                    "Cluster Mean Lines"
+                ]
+
+                data = [
+                    heatmap, ridgeline, location_heatmap, location_lines,
+                    corr_matrix, scree_plot, hgmm_dendogram, hgmm_pair_plot,
+                    hgmm_stacked_mean, hgmm_cluster_mean, hgmm_cluster_means
+                ]
+
+                out = OrderedDict(zip(titles, data))
+                """
                 out = {
                     "Representative Heatmap": heatmap,
                     "Ridge Line Plot": ridgeline,
@@ -278,8 +295,24 @@ class Meda:
                     "Cluster Stacked Means": hgmm_stacked_mean,
                     "Cluster Mean Heatmap": hgmm_cluster_mean,
                     "Cluster Mean Lines": hgmm_cluster_means
-                }
+                }"""
             else:
+                titles = [
+                    "Representative Heatmap", "Ridge Line Plot",
+                    "Location Heatmap", "Location Lines", "Correlation Matrix",
+                    "Scree Plot", "Hierarchical GMM Dendogram",
+                    "Cluster Stacked Means", "Cluster Mean Heatmap",
+                    "Cluster Mean Lines"
+                ]
+
+                data = [
+                    heatmap, ridgeline, location_heatmap, location_lines,
+                    corr_matrix, scree_plot, hgmm_dendogram, hgmm_stacked_mean,
+                    hgmm_cluster_mean, hgmm_cluster_means
+                ]
+
+                out = OrderedDict(zip(titles, data))
+                """
                 out = {
                     "Representative Heatmap": heatmap,
                     "Ridge Line Plot": ridgeline,
@@ -291,7 +324,7 @@ class Meda:
                     "Cluster Stacked Means": hgmm_stacked_mean,
                     "Cluster Mean Heatmap": hgmm_cluster_mean,
                     "Cluster Mean Lines": hgmm_cluster_means
-                }
+                }"""
             return out
 
     def generate_report(self, out):
