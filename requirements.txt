@@ -1,4 +1,9 @@
-jupyter==1.0.0
-redlemur
-knor
-cython
+Cython,
+pandas,
+numpy,
+scipy,
+plotly==2.2.2,
+matplotlib,
+colorlover,
+scikit-learn,
+knor==0.0.1
