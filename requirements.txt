@@ -1,4 +1,5 @@
 Cython,
+jinja2,
 pandas,
 numpy,
 scipy,

@@ -4,27 +4,28 @@ https://packaging.python.org/tutorials/distributing-packages/
 https://github.com/pypa/sampleproject
 """
 
+import sys
+
 # Always prefer setuptools over distutils
-from setuptools import setup, find_packages
-# To use a consistent encoding
-from codecs import open
-from os import path
+from setuptools import setup
 
-here = path.abspath(path.dirname(__file__))
-
-VERSION = '0.1.11'
+VERSION = '0.1.13.2'
 
 # Install Cython
 try:
     import Cython
 except ImportError:
-    import pip
+    #import pip
     # For installing Cython due to pip.main removal in Pip10
     import subprocess
-    import sys
-    subprocess.check_call([sys.executable, '-m', 'pip', 'install', 'Cython'])
-
-    import Cython
+    errno = subprocess.call([sys.executable, '-m', 'pip', 'install', 'cython'])
+    if errno:
+        print("Please install Cython.")
+        raise SystemExit(errno)
+    else:
+        import Cython
+        from Cython.Build import cythonize
+        from Cython.Distutils import build_ext
 
 setup(
     name='pymeda',
@@ -39,6 +40,8 @@ setup(
     setup_requires=['Cython'],
     install_requires=[
         'Cython',
+        'jinja2',
+        'ipykernel',
         'pandas',
         'numpy',
         'scipy',
@@ -46,7 +49,7 @@ setup(
         'matplotlib',
         'colorlover',
         'scikit-learn',
-        'knor==0.0.1',
+        'knor==0.0.2',
     ],
     package_data={
         'pymeda': ['*.html'],
