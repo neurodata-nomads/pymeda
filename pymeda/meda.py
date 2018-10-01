@@ -4,15 +4,16 @@ from collections import OrderedDict
 
 import numpy as np
 import pandas as pd
-import lemur.datasets as lds
-import lemur.plotters as lpl
-import lemur.clustering as lcl
 import knor
-
 from scipy.stats import zscore
-
 from plotly.offline import (download_plotlyjs, init_notebook_mode)
 from jinja2 import Environment, PackageLoader, select_autoescape, FileSystemLoader
+
+import pymeda.datasets as lds
+import pymeda.plotters as lpl
+import pymeda.clustering as lcl
+
+np.warnings.filterwarnings('ignore')
 
 
 class Meda:
@@ -29,9 +30,9 @@ class Meda:
         Title of the dataset.
     index_col : str, optional
         Name of the index column in csv file if `data` is a string.
-    cluster_levels : int (default=1)
+    cluster_levels : int (default=1), or None
         Number of levels for hierarchial clustering (e.g. 1 means running hierarchial
-        clustering only once. 2 means run twice).
+        clustering only once. 2 means run twice). If None, it does not run clustering.
     showticklabels : bool, optional
         If default value is passed (True), all the dimension labels will be displayed.
         Set to False to hide all dimension labels. 
@@ -258,12 +259,13 @@ class Meda:
         corr_matrix = self.correlation_matrix(mode=mode)
 
         #HGMM plots
-        hgmm_dendogram = self.cluster_dendrogram(mode=mode)
-        if not self._ds.n > 1000:
-            hgmm_pair_plot = self.cluster_pair_plot(mode=mode)
-        hgmm_stacked_mean = self.cluster_means_stacked(mode=mode)
-        hgmm_cluster_mean = self.cluster_means_heatmap(mode=mode)
-        hgmm_cluster_means = self.cluster_means_lines(mode=mode)
+        if self._cluster_levels is not None:
+            hgmm_dendogram = self.cluster_dendrogram(mode=mode)
+            if not self._ds.n > 1000:
+                hgmm_pair_plot = self.cluster_pair_plot(mode=mode)
+            hgmm_stacked_mean = self.cluster_means_stacked(mode=mode)
+            hgmm_cluster_mean = self.cluster_means_heatmap(mode=mode)
+            hgmm_cluster_means = self.cluster_means_lines(mode=mode)
 
         if mode == 'div':
             if not self._ds.n > 1000:
@@ -282,20 +284,6 @@ class Meda:
                 ]
 
                 out = OrderedDict(zip(titles, data))
-                """
-                out = {
-                    "Representative Heatmap": heatmap,
-                    "Ridge Line Plot": ridgeline,
-                    "Location Heatmap": location_heatmap,
-                    "Location Lines": location_lines,
-                    "Correlation Matrix": corr_matrix,
-                    "Scree Plot": scree_plot,
-                    "Hierarchical GMM Dendogram": hgmm_dendogram,
-                    "Pair Plot": hgmm_pair_plot,
-                    "Cluster Stacked Means": hgmm_stacked_mean,
-                    "Cluster Mean Heatmap": hgmm_cluster_mean,
-                    "Cluster Mean Lines": hgmm_cluster_means
-                }"""
             else:
                 titles = [
                     "Representative Heatmap", "Ridge Line Plot",
@@ -312,19 +300,6 @@ class Meda:
                 ]
 
                 out = OrderedDict(zip(titles, data))
-                """
-                out = {
-                    "Representative Heatmap": heatmap,
-                    "Ridge Line Plot": ridgeline,
-                    "Location Heatmap": location_heatmap,
-                    "Location Lines": location_lines,
-                    "Correlation Matrix": corr_matrix,
-                    "Scree Plot": scree_plot,
-                    "Hierarchical GMM Dendogram": hgmm_dendogram,
-                    "Cluster Stacked Means": hgmm_stacked_mean,
-                    "Cluster Mean Heatmap": hgmm_cluster_mean,
-                    "Cluster Mean Lines": hgmm_cluster_means
-                }"""
             return out
 
     def generate_report(self, out):
