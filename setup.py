@@ -9,7 +9,7 @@ import sys
 # Always prefer setuptools over distutils
 from setuptools import setup
 
-VERSION = '0.1.13.2'
+VERSION = '0.1.13.3'
 
 # Install Cython
 try:
@@ -49,7 +49,7 @@ setup(
         'matplotlib',
         'colorlover',
         'scikit-learn',
-        'knor==0.0.2',
+        'knor==0.0.1',
     ],
     package_data={
         'pymeda': ['*.html'],
