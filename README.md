@@ -63,7 +63,7 @@ You should see message that is similar to below:
 
 Copy and paste the URL into your browser, and you can now use **PyMEDA** in Jupyter.
 
-### Potential Installation Errors Due to Cython Dependency
+## Potential Installation Errors Due to Cython Dependency
 #### 1. Xcode is out of date
 
     In file included from knor/cknor/libkcommon/clusters.cpp:23:
