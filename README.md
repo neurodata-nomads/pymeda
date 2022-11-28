@@ -100,7 +100,7 @@ on your linux distribution.
 ## Usage
 It is **_highly_** recommended that you use **PyMEDA** inside Jupyter notebook, which allows **PyMEDA** visualizations to be easily embedded. However, **PyMEDA** also supports embedding in static HTML pages. 
 
-Please see [demo](https://github.com/neurodata-nomads/pymeda/blob/master/notebooks/Demo.ipynb "PyMEDA demo using iris dataset")
+Please see [demo](https://nbviewer.org/github/neurodata-nomads/pymeda/blob/master/notebooks/Demo.ipynb "PyMEDA demo using iris dataset")
 here to view the usages using the iris dataset. 
 
 If you are using Docker, then there should be a folder called `work` with the Demo already downloaded for you.
